@@ -1,0 +1,28 @@
+{
+  "name": "@goba/generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "probe": "tsx src/cli/probe-sgf.ts",
+    "probe:gnugo": "tsx src/cli/probe-gnugo-sgf.ts",
+    "match-corpus": "tsx src/cli/match-solution-corpus.ts",
+    "link:printable-key": "tsx src/cli/link-printable-key.ts",
+    "audit:gnugo-book": "tsx src/cli/audit-gnugo-book.ts",
+    "reconcile:printable-key": "tsx src/cli/reconcile-printable-key.ts",
+    "prepare:katago-crosscheck": "tsx src/cli/prepare-katago-crosscheck.ts",
+    "run:katago-analysis": "tsx src/cli/run-katago-analysis.ts",
+    "analyze:katago-crosscheck": "tsx src/cli/analyze-katago-crosscheck.ts",
+    "build:cho-client-pack": "tsx src/cli/build-cho-client-pack.ts",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "@goba/problem-contract": "0.1.0",
+    "@sabaki/sgf": "3.5.0",
+    "fastify": "5.12.5",
+    "tsumego.js": "1.1.0",
+    "zod": "3.25.76"
+  }
+}

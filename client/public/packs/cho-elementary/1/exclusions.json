@@ -1,0 +1,197 @@
+[
+  {
+    "problemNumber": 193,
+    "corpus": "exact",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 214,
+    "corpus": "exact",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 724,
+    "corpus": "exact",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 804,
+    "corpus": "exact",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 887,
+    "corpus": "exact",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 39,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 57,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 87,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 103,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 108,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 113,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 166,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 175,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 200,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 209,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 249,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 282,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 343,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 412,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 414,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 496,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 502,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 517,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 529,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 537,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 640,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 642,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 690,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 746,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 775,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 892,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 4,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 8,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 40,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 93,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 216,
+    "corpus": "genuine-difference",
+    "reason": "both-versions-illegal"
+  },
+  {
+    "problemNumber": 420,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 533,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 617,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "name": "goba",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["client", "generator", "packages/*"],
+  "engines": { "node": "^22.12.0 || >=24.0.0" },
+  "scripts": {
+    "dev": "npm run dev --workspace @goba/client",
+    "generator:dev": "npm run dev --workspace @goba/generator",
+    "generator:start": "npm run start --workspace @goba/generator",
+    "preview": "npm run preview --workspace @goba/client",
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "npm run check && npm run build --workspace @goba/client && npm run build --workspace @goba/generator",
+    "fixtures": "tsx scripts/build-fixtures.ts"
+  },
+  "devDependencies": {
+    "@types/node": "22.18.6",
+    "@types/react": "19.1.13",
+    "@types/react-dom": "19.1.9",
+    "fake-indexeddb": "6.2.2",
+    "tsx": "4.20.5",
+    "typescript": "5.9.2",
+    "vitest": "4.1.11"
+  }
+}
