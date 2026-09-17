@@ -16,8 +16,11 @@ Current GitHub Pages deployment:
 
 - `https://fjqtt.github.io/goba/practice/today`
 - `https://fjqtt.github.io/goba/statistics`
+- `https://fjqtt.github.io/goba/settings`
 
-The current uncommitted work adds `/settings` and Russian/English localization. It is built and tested locally but is **not deployed** until a new commit and push are explicitly approved.
+Russian/English localization and `/settings` were committed as `2faddca` and deployed successfully by GitHub Actions run `35251645341`.
+
+The current uncommitted Client fix removes horizontal board scrolling on narrow phones. `BoardAdapter` sizes Shudan from the container's content width (client width minus computed left/right padding), and `.board-focus` uses `overflow: hidden`. Automated checks pass; the fix is not deployed yet and still needs confirmation on the reporting phone.
 
 The bundled Cho pack is public because this is a requested test deployment, but its status remains `LicenseRef-Restricted-Research`. Do not describe it as rights-cleared or expert verified.
 
@@ -57,6 +60,11 @@ Changed/new modules:
 - `client/src/styles.css`
 - `client/index.html`
 - `client/vite.config.ts`
+
+Latest mobile-width fix:
+
+- `client/src/components/BoardAdapter.tsx`
+- `client/src/styles.css`
 
 All repository Markdown documentation was rewritten in English. Architecture, gates, audit figures, commands, links, rights restrictions, and current checkpoint were preserved. `rg` reports no Cyrillic text in Markdown.
 
@@ -153,6 +161,10 @@ Current localization/settings block:
 - Local HTTP smoke for settings returned **200**, 773 bytes.
 - `git diff --check` passed after code and documentation changes.
 - `rg -n '\p{Cyrillic}' --glob '*.md' --glob '!node_modules/**'` returned no output after translation.
+- GitHub Actions run `35251645341` passed typecheck, 58 tests, build, artifact upload, and Pages deploy.
+- Public HTTPS smoke returned 200 for practice, statistics, settings, and the web manifest.
+- The published bundle is `assets/index-DnapFNC2.js` and contains `interface-language`, `Quiet Move`, `Main navigation`, and `Settings`.
+- After the board-width fix: `npm run check` passed; `npm test -- --run` passed with 21 files / 58 tests; `VITE_BASE_PATH=/goba/ npm run build --workspace @goba/client` passed with 20 precache entries / 2364.41 KiB.
 
 Previous deployment:
 
@@ -165,7 +177,6 @@ Visual QA was not completed: the in-app browser provider is unavailable in this 
 
 ## Known limitations
 
-- The deployed GitHub Pages build does not yet contain settings/localization.
 - The static web-app manifest still uses the Russian fallback install name/description. The selected in-app locale applies after launch.
 - Arbitrary future content explanations are shown verbatim unless added to the translation mapping.
 - Shudan pan/zoom and real mobile gesture QA remain incomplete.
@@ -177,14 +188,11 @@ Visual QA was not completed: the in-app browser provider is unavailable in this 
 
 ## Next concrete steps
 
-1. Review the current diff and obtain explicit approval for the proposed commit message before committing.
-2. After separate push approval, push `main`, wait for the Pages workflow, and smoke-test the three public routes.
-3. On a real iPhone: open the Pages URL, add to Home Screen, verify Russian/English switching persists after force quit, test direct settings/statistics routes, unfinished-attempt restore, offline reopen, and reset.
-4. Confirm header fit and tap targets at 375/390 px plus VoiceOver labels.
-5. Resume content work with the 27 legal excluded candidates and the 254-state KataGo review queue. Keep all uncertain branches neutral.
+1. Commit and deploy the pending board-width fix after the required user approval, then confirm that the board no longer scrolls horizontally on the reporting phone.
+2. On a real iPhone, also verify Russian/English switching persists after force quit, direct settings/statistics routes, unfinished-attempt restore, offline reopen, and reset.
+3. Confirm header fit and tap targets at 375/390 px plus VoiceOver labels.
+4. Resume content work with the 27 legal excluded candidates and the 254-state KataGo review queue. Keep all uncertain branches neutral.
 
 ## Git rule
 
-Do not commit or push without the user's prior permission. Before committing, show the exact proposed message and wait. The current suggested message is:
-
-`Add bilingual settings and translate project documentation`
+Do not commit or push without the user's prior permission. Before committing, show the exact proposed message and wait.

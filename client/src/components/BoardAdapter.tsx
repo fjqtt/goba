@@ -39,7 +39,12 @@ export function BoardAdapter({
   useEffect(() => {
     const element = containerRef.current;
     if (!element) return;
-    const update = () => setWidth(Math.max(240, Math.floor(element.getBoundingClientRect().width)));
+    const update = () => {
+      const styles = window.getComputedStyle(element);
+      const horizontalPadding = Number.parseFloat(styles.paddingLeft)
+        + Number.parseFloat(styles.paddingRight);
+      setWidth(Math.max(240, Math.floor(element.clientWidth - horizontalPadding)));
+    };
     update();
     const observer = new ResizeObserver(update);
     observer.observe(element);

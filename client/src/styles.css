@@ -124,7 +124,7 @@ button { font: inherit; }
   align-items: center;
   justify-content: center;
   padding: 20px 10px 14px;
-  overflow: auto;
+  overflow: hidden;
   touch-action: manipulation;
   outline: 0;
 }
