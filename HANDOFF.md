@@ -20,7 +20,7 @@ Current GitHub Pages deployment:
 
 Russian/English localization and `/settings` were committed as `2faddca` and deployed successfully by GitHub Actions run `35251645341`.
 
-The current uncommitted Client fix removes horizontal board scrolling on narrow phones. `BoardAdapter` sizes Shudan from the container's content width (client width minus computed left/right padding), and `.board-focus` uses `overflow: hidden`. Automated checks pass; the fix is not deployed yet and still needs confirmation on the reporting phone.
+Commit `3f1023c` removed the horizontal scrollbar but made the board visibly clipped on the reporting phone. Do not continue that sizing approach. The current uncommitted correction replaces Shudan's iterative `BoundedGoban` measurement with a directly calculated integer vertex size based on visible rows/columns, two coordinate cells, the CSS border, available content width, and the 520 px height cap. A 4 px fit inset covers browser rounding. The existing overflow clipping now acts only as a safety net because the renderer itself is bounded.
 
 The bundled Cho pack is public because this is a requested test deployment, but its status remains `LicenseRef-Restricted-Research`. Do not describe it as rights-cleared or expert verified.
 
@@ -65,6 +65,8 @@ Latest mobile-width fix:
 
 - `client/src/components/BoardAdapter.tsx`
 - `client/src/styles.css`
+- `client/src/components/board-sizing.ts`
+- `client/src/components/BoardAdapter.test.ts`
 
 All repository Markdown documentation was rewritten in English. Architecture, gates, audit figures, commands, links, rights restrictions, and current checkpoint were preserved. `rg` reports no Cyrillic text in Markdown.
 
@@ -165,6 +167,7 @@ Current localization/settings block:
 - Public HTTPS smoke returned 200 for practice, statistics, settings, and the web manifest.
 - The published bundle is `assets/index-DnapFNC2.js` and contains `interface-language`, `Quiet Move`, `Main navigation`, and `Settings`.
 - After the board-width fix: `npm run check` passed; `npm test -- --run` passed with 21 files / 58 tests; `VITE_BASE_PATH=/goba/ npm run build --workspace @goba/client` passed with 20 precache entries / 2364.41 KiB.
+- After the clipping report and direct-sizing correction: `npm run check` passed; `npm test -- --run` passed with 22 files / 62 tests. The sizing regression covers 286 px and 341 px mobile content widths plus wider/full-board cases, and asserts both width and height bounds. The `/goba/` production build passed with 20 precache entries / 2363.51 KiB.
 
 Previous deployment:
 
@@ -188,7 +191,7 @@ Visual QA was not completed: the in-app browser provider is unavailable in this 
 
 ## Next concrete steps
 
-1. Commit and deploy the pending board-width fix after the required user approval, then confirm that the board no longer scrolls horizontally on the reporting phone.
+1. Commit and deploy the pending direct board-sizing correction after the required user approval, then confirm that the full board is visible without horizontal scrolling on the reporting phone.
 2. On a real iPhone, also verify Russian/English switching persists after force quit, direct settings/statistics routes, unfinished-attempt restore, offline reopen, and reset.
 3. Confirm header fit and tap targets at 375/390 px plus VoiceOver labels.
 4. Resume content work with the 27 legal excluded candidates and the 254-state KataGo review queue. Keep all uncertain branches neutral.

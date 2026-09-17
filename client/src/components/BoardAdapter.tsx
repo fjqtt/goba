@@ -1,17 +1,18 @@
 import {
-  BoundedGoban,
-  type BoundedGobanProps,
+  Goban,
+  type GobanProps,
   type GhostStone,
   type Map as ShudanMap,
 } from '@sabaki/shudan';
 import { colorToSign, pointToVertex, vertexToPoint, type Color } from '@goba/problem-contract';
 import { useEffect, useMemo, useRef, useState, type ComponentType, type KeyboardEvent } from 'react';
 import { translate, type Language } from '../i18n';
+import { calculateVertexSize } from './board-sizing';
 
 // Shudan is implemented with Preact but the build aliases its runtime to React.
 // Its published declaration still names Preact's ComponentClass, so normalize
 // that declaration at this single adapter boundary.
-const ReactBoundedGoban = BoundedGoban as unknown as ComponentType<BoundedGobanProps>;
+const ReactGoban = Goban as unknown as ComponentType<GobanProps>;
 
 type Props = {
   signMap: Array<Array<0 | 1 | -1>>;
@@ -32,7 +33,7 @@ export function BoardAdapter({
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pressedRef = useRef<number | null>(null);
-  const [width, setWidth] = useState(320);
+  const [availableWidth, setAvailableWidth] = useState(280);
   const [keyboardCursor, setKeyboardCursor] = useState<number | null>(null);
   const boardSize = signMap.length;
 
@@ -43,13 +44,17 @@ export function BoardAdapter({
       const styles = window.getComputedStyle(element);
       const horizontalPadding = Number.parseFloat(styles.paddingLeft)
         + Number.parseFloat(styles.paddingRight);
-      setWidth(Math.max(240, Math.floor(element.clientWidth - horizontalPadding)));
+      setAvailableWidth(Math.max(200, Math.floor(element.clientWidth - horizontalPadding)));
     };
     update();
     const observer = new ResizeObserver(update);
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
+
+  const viewportColumns = viewport.x1 - viewport.x0 + 1;
+  const viewportRows = viewport.y1 - viewport.y0 + 1;
+  const vertexSize = calculateVertexSize(availableWidth, viewportColumns, viewportRows);
 
   const ghostStoneMap = useMemo<ShudanMap<GhostStone | null>>(() => {
     const map = emptyMap<GhostStone | null>(boardSize, null);
@@ -90,10 +95,8 @@ export function BoardAdapter({
         onKeyDown={onKeyDown}
         onPointerCancel={() => { pressedRef.current = null; }}
       >
-        <ReactBoundedGoban
-          maxWidth={width}
-          maxHeight={Math.min(width, 520)}
-          maxVertexSize={72}
+        <ReactGoban
+          vertexSize={vertexSize}
           signMap={signMap}
           ghostStoneMap={ghostStoneMap}
           rangeX={[viewport.x0, viewport.x1]}
