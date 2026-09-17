@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { collectionStats, type CollectionRun } from '../practice/collection-progress';
+import { translate, type Language } from '../i18n';
 
 type Props = {
   run: CollectionRun;
-  collectionTitle: string;
+  language: Language;
   busy: boolean;
   modeChangeDisabled: boolean;
   onRepeatMistakes: () => void;
@@ -13,7 +14,7 @@ type Props = {
 
 export function StatsPage({
   run,
-  collectionTitle,
+  language,
   busy,
   modeChangeDisabled,
   onRepeatMistakes,
@@ -29,43 +30,43 @@ export function StatsPage({
   return (
     <section className="stats-page" aria-labelledby="stats-title">
       <header className="stats-heading">
-        <p>{collectionTitle}</p>
-        <h1 id="stats-title">Статистика</h1>
-        <p className="stats-summary">Пройдено {solved} из {stats.total}</p>
+        <p>{translate(language, 'collectionTitle')}</p>
+        <h1 id="stats-title">{translate(language, 'statistics')}</h1>
+        <p className="stats-summary">{translate(language, 'completed', { solved, total: stats.total })}</p>
       </header>
 
-      <div className="stats-progress" aria-label={`Пройдено ${solvedPercent}%`}>
+      <div className="stats-progress" aria-label={translate(language, 'completedPercent', { percent: solvedPercent })}>
         <i style={{ width: `${solvedPercent}%` }} />
       </div>
 
       <div className="stats-grid">
-        <article><strong>{stats.correct}</strong><span>Правильно</span></article>
-        <article><strong>{stats.wrong}</strong><span>Ошибки</span></article>
-        <article><strong>{stats.unseen}</strong><span>Не решено</span></article>
-        <article><strong>{accuracy}%</strong><span>Точность</span></article>
+        <article><strong>{stats.correct}</strong><span>{translate(language, 'correct')}</span></article>
+        <article><strong>{stats.wrong}</strong><span>{translate(language, 'mistakes')}</span></article>
+        <article><strong>{stats.unseen}</strong><span>{translate(language, 'unseen')}</span></article>
+        <article><strong>{accuracy}%</strong><span>{translate(language, 'accuracy')}</span></article>
       </div>
 
       <div className="stats-actions">
         <button type="button" disabled={busy || modeChangeDisabled || stats.wrong === 0} onClick={onRepeatMistakes}>
-          Повторять ошибки
+          {translate(language, 'repeatMistakes')}
         </button>
         <button type="button" disabled={busy || modeChangeDisabled || stats.unseen === 0} onClick={onContinueAll}>
-          Продолжить новые
+          {translate(language, 'continueNew')}
         </button>
         {confirmReset ? (
           <div className="reset-confirmation">
-            <span>Стереть результаты и историю повторений?</span>
-            <button type="button" disabled={busy} onClick={onReset}>Стереть</button>
-            <button type="button" disabled={busy} onClick={() => setConfirmReset(false)}>Отмена</button>
+            <span>{translate(language, 'resetPrompt')}</span>
+            <button type="button" disabled={busy} onClick={onReset}>{translate(language, 'erase')}</button>
+            <button type="button" disabled={busy} onClick={() => setConfirmReset(false)}>{translate(language, 'cancel')}</button>
           </div>
         ) : (
           <button className="reset-button" type="button" disabled={busy} onClick={() => setConfirmReset(true)}>
-            Сбросить прогресс
+            {translate(language, 'resetProgress')}
           </button>
         )}
       </div>
 
-      <p className="storage-note">Прогресс хранится локально на этом устройстве.</p>
+      <p className="storage-note">{translate(language, 'progressStoredLocally')}</p>
     </section>
   );
 }

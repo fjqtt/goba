@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
 import type { ProblemV1 } from '@goba/problem-contract';
 import { BoardAdapter } from './components/BoardAdapter';
+import { SettingsPage } from './components/SettingsPage';
 import { StatsPage } from './components/StatsPage';
 import { UpdateNotice } from './components/UpdateNotice';
 import {
   CHO_COLLECTION_ID,
-  CHO_COLLECTION_TITLE,
   loadBundledChoCatalog,
 } from './catalog/bundled-catalog';
+import {
+  DEFAULT_LANGUAGE,
+  translate,
+  translateSessionMessage,
+  type Language,
+} from './i18n';
 import {
   playStudentMove,
   createCheckpoint,
@@ -33,14 +39,16 @@ import {
   requestPersistentStorage,
   saveActiveSession,
 } from './storage/database';
+import { loadLanguage, saveLanguage } from './storage/preferences';
 import { recordTerminalReview } from './srs/review-events';
 
 const OPPONENT_REPLY_DELAY_MS = 420;
 const APP_BASE_PATH = import.meta.env.BASE_URL;
 const PRACTICE_PATH = `${APP_BASE_PATH}practice/today`;
 const STATISTICS_PATH = `${APP_BASE_PATH}statistics`;
+const SETTINGS_PATH = `${APP_BASE_PATH}settings`;
 
-type Page = 'practice' | 'statistics';
+type Page = 'practice' | 'statistics' | 'settings';
 
 export function App() {
   const [catalog, setCatalog] = useState<ProblemV1[]>([]);
@@ -49,6 +57,7 @@ export function App() {
   const [pendingReply, setPendingReply] = useState<PuzzleSession | null>(null);
   const [resultRecorded, setResultRecorded] = useState(false);
   const [page, setPage] = useState<Page>(() => pageFromPath(window.location.pathname));
+  const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [busy, setBusy] = useState(true);
 
@@ -60,7 +69,19 @@ export function App() {
 
   useEffect(() => {
     void requestPersistentStorage();
+    void loadLanguage().then(setLanguage).catch(() => {
+      // Keep the default language if IndexedDB is unavailable.
+    });
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.title = translate(language, 'documentTitle');
+    document.querySelector('meta[name="description"]')?.setAttribute(
+      'content',
+      translate(language, 'documentDescription'),
+    );
+  }, [language]);
 
   useEffect(() => {
     let active = true;
@@ -214,47 +235,76 @@ export function App() {
   );
 
   const navigateTo = (nextPage: Page) => {
-    const path = nextPage === 'statistics' ? STATISTICS_PATH : PRACTICE_PATH;
+    const path = nextPage === 'statistics'
+      ? STATISTICS_PATH
+      : nextPage === 'settings'
+        ? SETTINGS_PATH
+        : PRACTICE_PATH;
     if (window.location.pathname !== path) window.history.pushState(null, '', path);
     setPage(nextPage);
     window.scrollTo({ top: 0 });
   };
 
+  const changeLanguage = (nextLanguage: Language) => {
+    setLanguage(nextLanguage);
+    void saveLanguage(nextLanguage).catch(() => {
+      // The selection still applies to the current session.
+    });
+  };
+
   return (
     <main className="app-shell">
       <header className="topbar">
-        <a className="brand" href={PRACTICE_PATH} aria-label="Тихий ход, сегодняшняя практика" onClick={event => {
+        <a className="brand" href={PRACTICE_PATH} aria-label={translate(language, 'brandAria')} onClick={event => {
           event.preventDefault();
           navigateTo('practice');
         }}>
           <span className="brand-mark" aria-hidden="true">●</span>
-          <span>Тихий ход</span>
+          <span>{translate(language, 'brand')}</span>
         </a>
-        {page === 'statistics' ? (
-          <a className="topbar-link" href={PRACTICE_PATH} onClick={event => {
-            event.preventDefault();
-            navigateTo('practice');
-          }}><span aria-hidden="true">←</span> Назад</a>
-        ) : (
-          <a
-            className={`topbar-link${run ? '' : ' topbar-link-disabled'}`}
-            href={run ? STATISTICS_PATH : PRACTICE_PATH}
-            aria-label={`Задача ${passPosition} из ${passTotal}. Открыть статистику`}
-            aria-disabled={!run}
-            onClick={event => {
+        <nav className="topbar-nav" aria-label={translate(language, 'mainNavigation')}>
+          {page === 'practice' ? (
+            <a
+              className={`topbar-link${run ? '' : ' topbar-link-disabled'}`}
+              href={run ? STATISTICS_PATH : PRACTICE_PATH}
+              aria-label={translate(language, 'openStatistics', { position: passPosition, total: passTotal })}
+              aria-disabled={!run}
+              onClick={event => {
+                event.preventDefault();
+                if (run) navigateTo('statistics');
+              }}
+            >
+              {translate(language, 'statistics')}
+            </a>
+          ) : (
+            <a className="topbar-link" href={PRACTICE_PATH} onClick={event => {
               event.preventDefault();
-              if (run) navigateTo('statistics');
-            }}
-          >
-            Статистика
-          </a>
-        )}
+              navigateTo('practice');
+            }}><span aria-hidden="true">←</span> {translate(language, 'back')}</a>
+          )}
+          {page !== 'settings' && (
+            <a
+              className="topbar-icon-link"
+              href={SETTINGS_PATH}
+              aria-label={translate(language, 'openSettings')}
+              title={translate(language, 'settings')}
+              onClick={event => {
+                event.preventDefault();
+                navigateTo('settings');
+              }}
+            >
+              <span aria-hidden="true">⚙</span>
+            </a>
+          )}
+        </nav>
       </header>
 
-      {page === 'statistics' && run ? (
+      {page === 'settings' ? (
+        <SettingsPage language={language} onLanguageChange={changeLanguage} />
+      ) : page === 'statistics' && run ? (
         <StatsPage
           run={run}
-          collectionTitle={CHO_COLLECTION_TITLE}
+          language={language}
           busy={busy || Boolean(session && ['success', 'failure'].includes(session.phase) && !resultRecorded)}
           modeChangeDisabled={attemptInProgress}
           onRepeatMistakes={() => void beginMode('mistakes')}
@@ -262,12 +312,12 @@ export function App() {
           onReset={() => void resetProgress()}
         />
       ) : page === 'statistics' ? (
-        <div className="loading" role="status">Готовим статистику…</div>
+        <div className="loading" role="status">{translate(language, 'loadingStatistics')}</div>
       ) : (
         <>
       {problem && session && (
         <section className="practice-heading">
-          <h1>{headingColor === 'W' ? 'Ход белых' : 'Ход чёрных'}</h1>
+          <h1>{translate(language, headingColor === 'W' ? 'whiteToPlay' : 'blackToPlay')}</h1>
         </section>
       )}
 
@@ -277,6 +327,7 @@ export function App() {
             signMap={displayState!.board.signMap}
             viewport={problem.viewport}
             toPlay={displayState!.toPlay}
+            language={language}
             disabled={busy || ['success', 'failure', 'content-error'].includes(session.phase)}
             onMove={play}
           />
@@ -285,15 +336,18 @@ export function App() {
             <section className={`feedback feedback-${session.phase}`} aria-live="polite">
               <span className="feedback-symbol" aria-hidden="true">{phaseSymbol(session.phase)}</span>
               <p>
-                {session.message}
+                {translateSessionMessage(session.message, language)}
                 {session.phase === 'failure' && (
-                  <small>Ход {session.demoIndex} из {session.path.length}</small>
+                  <small>{translate(language, 'refutationStep', {
+                    current: session.demoIndex,
+                    total: session.path.length,
+                  })}</small>
                 )}
               </p>
             </section>
           )}
 
-          <nav className="bottom-actions" aria-label="Действия с задачей">
+          <nav className="bottom-actions" aria-label={translate(language, 'problemActions')}>
             {session.phase === 'failure' && (
               <>
                 <button
@@ -302,7 +356,7 @@ export function App() {
                   disabled={busy || session.demoIndex === 0}
                   onClick={() => setSession(stepDemonstration(session, -1))}
                 >
-                  Назад
+                  {translate(language, 'previous')}
                 </button>
                 <button
                   className="secondary-button"
@@ -310,7 +364,7 @@ export function App() {
                   disabled={busy || session.demoIndex === session.path.length}
                   onClick={() => setSession(stepDemonstration(session, 1))}
                 >
-                  Вперёд
+                  {translate(language, 'forward')}
                 </button>
               </>
             )}
@@ -320,29 +374,29 @@ export function App() {
               disabled={busy || !resultRecorded || !['success', 'failure'].includes(session.phase)}
               onClick={() => void nextProblem()}
             >
-              Дальше <span aria-hidden="true">→</span>
+              {translate(language, 'next')} <span aria-hidden="true">→</span>
             </button>
           </nav>
         </>
       ) : loadError && !busy ? (
         <section className="collection-complete collection-error" role="alert">
           <span aria-hidden="true">!</span>
-          <h1>Сборник не загрузился</h1>
+          <h1>{translate(language, 'collectionLoadFailed')}</h1>
           <p>{loadError}</p>
-          <button type="button" onClick={() => window.location.reload()}>Повторить</button>
+          <button type="button" onClick={() => window.location.reload()}>{translate(language, 'retry')}</button>
         </section>
       ) : run && !busy ? (
         <section className="collection-complete">
           <span aria-hidden="true">✓</span>
-          <h1>{run.mode === 'mistakes' ? 'Ошибки разобраны' : 'Сборник пройден'}</h1>
-          <button type="button" onClick={() => navigateTo('statistics')}>Посмотреть статистику</button>
+          <h1>{translate(language, run.mode === 'mistakes' ? 'mistakesCleared' : 'collectionCompleted')}</h1>
+          <button type="button" onClick={() => navigateTo('statistics')}>{translate(language, 'viewStatistics')}</button>
         </section>
       ) : (
-        <div className="loading" role="status">Готовим доску…</div>
+        <div className="loading" role="status">{translate(language, 'loadingBoard')}</div>
       )}
         </>
       )}
-      <UpdateNotice safeToUpdate={!busy} />
+      <UpdateNotice safeToUpdate={!busy} language={language} />
     </main>
   );
 }
@@ -360,5 +414,7 @@ function delay(milliseconds: number): Promise<void> {
 
 function pageFromPath(pathname: string): Page {
   const normalizedPath = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
-  return normalizedPath === STATISTICS_PATH ? 'statistics' : 'practice';
+  if (normalizedPath === STATISTICS_PATH) return 'statistics';
+  if (normalizedPath === SETTINGS_PATH) return 'settings';
+  return 'practice';
 }

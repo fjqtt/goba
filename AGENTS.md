@@ -1,32 +1,32 @@
-# Работа над Go practice
+# Working on Go practice
 
-## Перед началом
+## Before starting
 
-1. Прочитать `HANDOFF.md`, затем `client/PROGRESS.md` или `generator/PROGRESS.md`.
-2. Архитектура и критерии приёмки — в `client/PLAN.md` и `generator/PLAN.md`.
-3. Продолжать первый незавершённый пункт. Не считать этап выполненным, пока не выполнен его gate.
+1. Read `HANDOFF.md`, then `client/PROGRESS.md` or `generator/PROGRESS.md`.
+2. Architecture and acceptance criteria are in `client/PLAN.md` and `generator/PLAN.md`.
+3. Continue the first unfinished item. Do not mark a stage complete until its gate passes.
 
-## Передача работы — обязательна
+## Handoff is mandatory
 
-- Обновлять checklist после каждого законченного смыслового блока, не только в конце сессии.
-- В `HANDOFF.md` сохранять текущий шаг, изменённые модули, команды проверок и их фактический результат, блокеры и следующий конкретный шаг.
-- `[x]` — реализовано и проверено указанным способом; `[ ]` — не завершено. Частичную реализацию описывать явно.
-- Проверки на реальном iPhone, права на контент и экспертную проверку не подменять автоматическими тестами.
-- Не помечать тестовые позиции как экспертно проверенный публичный каталог.
+- Update the checklist after every completed logical block, not only at the end of a session.
+- Record the current step, changed modules, verification commands and their actual results, blockers, and the next concrete step in `HANDOFF.md`.
+- `[x]` means implemented and verified as stated; `[ ]` means incomplete. Describe partial implementation explicitly.
+- Automated tests do not replace checks on a real iPhone, content rights clearance, or expert review.
+- Do not describe test positions as an expert-verified public catalog.
 
 ## Git
 
-- Никогда не делать commit или push без предварительного разрешения пользователя.
-- Перед commit показать сообщение и дождаться одобрения.
-- Не включать issue/ticket IDs в commit message; только в PR title.
+- Never commit or push without the user's prior permission.
+- Show the proposed commit message and wait for approval before committing.
+- Do not include issue or ticket IDs in commit messages; include them only in PR titles.
 
 ## TeamCity
 
-При расследовании проверять и MCP (логи/runtime), и `.teamcity/**/*.kt` (источник истины конфигурации).
+When investigating TeamCity, check both MCP data (logs/runtime) and `.teamcity/**/*.kt` (the source of truth for configuration).
 
-## Границы
+## Boundaries
 
-- Клиент — React + TypeScript + Vite, Shudan через адаптер, Dexie, ts-fsrs.
-- Generator — отдельный проект; общие контракт и правила находятся в `packages/problem-contract`.
-- Отсутствующая ветка — unclassified, никогда не wrong. Leaf без terminal — ошибка контента.
-- Не добавлять генератор/AI в runtime-путь решения клиента.
+- Client: React + TypeScript + Vite, Shudan behind an adapter, Dexie, and ts-fsrs.
+- Generator is a separate project; shared contracts and rules live in `packages/problem-contract`.
+- A missing branch is `unclassified`, never `wrong`. A leaf without a terminal is a content error.
+- Do not add the Generator or AI to the Client's runtime solving path.

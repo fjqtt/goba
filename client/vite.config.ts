@@ -10,7 +10,7 @@ export default defineConfig(() => {
     base,
     plugins: [
       react(),
-      spaEntryPoints(['practice/today', 'statistics']),
+      spaEntryPoints(['practice/today', 'statistics', 'settings']),
       VitePWA({
         registerType: 'prompt',
         devOptions: { enabled: false },

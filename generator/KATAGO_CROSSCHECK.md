@@ -1,32 +1,32 @@
 # KataGo cross-check Cho elementary
 
-Дата: 2026-09-16. Модель: `g170e-b20c256x2-s5303129600-d1228401921`, Metal, 32 visits на состояние.
+Date: 2026-09-16. Model: `g170e-b20c256x2-s5303129600-d1228401921`, Metal, 32 visits per state.
 
-KataGo здесь используется как независимый ranking signal на локально ограниченном наборе ходов. Это не proof жизни/смерти и не основание автоматически публиковать задачу.
+KataGo is used here as an independent ranking signal over a locally restricted move set. It is not life-and-death proof and does not justify automatic publication.
 
-## Покрытие
+## Coverage
 
-- Проверено состояний: **2642**, ошибок Analysis API: **0**.
-- Exact-linked: **2393** состояний / **845** задач.
-- Восстановленные setup-кандидаты: **197** состояний / **47** задач.
-- Восемь настоящих setup-различий проверены в обеих версиях позиции.
+- States checked: **2,642**; Analysis API errors: **0**.
+- Exact-linked: **2,393** states / **845** problems.
+- Reconstructed setup candidates: **197** states / **47** problems.
+- All eight real setup differences were checked on both position versions.
 
-## Exact-linked: все ходы printable line
+## Exact-linked: every printable-line move
 
-| Метрика | Значение |
+| Metric | Value |
 |---|---:|
-| Ход ключа top-1 KataGo search | 1908/2393 |
-| Ход ключа top-3 KataGo search | 2268/2393 |
-| Ход ключа top-5 policy | 2366/2393 |
-| Есть продолжение GNU Go на этом префиксе | 1540 |
-| GNU Go содержит следующий ход ключа | 1366/1540 |
-| Продолжение GNU Go top-5 KataGo policy | 1498/1540 |
+| Key move top-1 in KataGo search | 1908/2393 |
+| Key move top-3 in KataGo search | 2268/2393 |
+| Key move top-5 in policy | 2366/2393 |
+| GNU Go has a continuation at this prefix | 1540 |
+| GNU Go contains the next key move | 1366/1540 |
+| GNU Go continuation top-5 in KataGo policy | 1498/1540 |
 
-На **174** префиксах GNU Go предлагает продолжение, но не следующий ход ключа. KataGo policy ставит ход ключа выше в **126**, GNU Go-вариант выше в **48**, одинаковый ранг — в **0**.
+At **174** prefixes GNU Go proposes a continuation that omits the next key move. KataGo policy ranks the key higher in **126**, the GNU Go move higher in **48**, and ties in **0**.
 
-### По статусу GNU Go audit
+### By GNU Go audit status
 
-| Статус | Состояний | key top-3 policy | GNU содержит key | GNU top-3 policy |
+| Status | States | key top-3 policy | GNU contains key | GNU top-3 policy |
 |---|---:|---:|---:|---:|
 | all-root-moves-covered | 1 | 1/1 | 1/1 | 1/1 |
 | full-line-match | 694 | 677/694 | 694/694 | 680/694 |
@@ -34,18 +34,18 @@ KataGo здесь используется как независимый ranking
 | partial-line-match | 555 | 538/555 | 395/420 | 407/420 |
 | root-only-match | 1128 | 1078/1128 | 276/425 | 368/425 |
 
-## Восстановленные 47 позиций
+## 47 reconstructed positions
 
-| Метрика | Значение |
+| Metric | Value |
 |---|---:|
-| Состояний | 197 |
-| Незаконных ходов ключа по ld-v1 | 10 |
-| Ход ключа top-5 policy | 157/197 |
-| GNU Go содержит следующий ход ключа | 9/17 |
+| States | 197 |
+| Illegal key moves under ld-v1 | 10 |
+| Key move top-5 in policy | 157/197 |
+| GNU Go contains the next key move | 9/17 |
 
-## Восемь настоящих setup-различий
+## Eight real setup differences
 
-| № | Ходов | root rank key/SGF | top-3 key/SGF | illegal key/SGF | MRR key/SGF | Сигнал |
+| No. | Moves | root rank key/SGF | top-3 key/SGF | illegal key/SGF | MRR key/SGF | Signal |
 |---:|---:|---:|---:|---:|---:|---|
 | 4 | 1 | 1/1 | 1/1 | 0/0 | 1.000/1.000 | inconclusive |
 | 8 | 1 | 1/1 | 1/1 | 0/0 | 1.000/1.000 | inconclusive |
@@ -56,11 +56,11 @@ KataGo здесь используется как независимый ranking
 | 533 | 1 | 2/— | 1/0 | 0/1 | 0.500/0.000 | key-position-stronger |
 | 617 | 6 | 4/1 | 3/5 | 0/1 | 0.469/0.900 | key-position-stronger |
 
-## Прямые расхождения GNU Go с ключом
+## Direct GNU Go disagreements with the key
 
-Показаны первые 100 состояний, где выбранное дерево GNU Go имеет продолжение на том же префиксе, но не содержит следующий ход ключа. Полный список — в JSON/CSV артефактах.
+The first 100 states are shown where the selected GNU Go tree continues at the same prefix but omits the next key move. JSON/CSV artifacts contain the full list.
 
-| № | Ход линии | Ключ | GNU Go | rank ключа | rank GNU Go |
+| No. | Line move | Key | GNU Go | key rank | GNU Go rank |
 |---:|---:|---|---|---:|---:|
 | 11 | 1 | D19 | E19 | 1 | 3 |
 | 17 | 1 | A18 | B18 | 1 | 2 |

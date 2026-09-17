@@ -1,41 +1,41 @@
 # Problem Generator
 
-Отдельный Fastify-сервис для импорта SGF, формализации цели и запуска ограниченных solver workers. Результат solver сохраняется как кандидат для проверки; он не публикуется автоматически.
+A separate Fastify service for importing SGF, formalizing a goal, and running constrained solver workers. Solver output is saved as a review candidate and is never published automatically.
 
-- [Архитектура](PLAN.md)
-- [Прогресс](PROGRESS.md)
+- [Architecture](PLAN.md)
+- [Progress](PROGRESS.md)
 - [RZS feasibility](RZS_FEASIBILITY.md)
 - [Mac solver evaluation](MAC_SOLVER_EVALUATION.md)
-- [Передача работы](../HANDOFF.md)
+- [Handoff](../HANDOFF.md)
 
-Контракт публикуемого контента — `@goba/problem-contract`. Доступа к пользовательской базе Client у Generator не будет.
+Published content follows `@goba/problem-contract`. Generator does not access Client user data.
 
-## Запуск
+## Run
 
 ```bash
 npm run generator:start
 ```
 
-Сервис слушает `http://127.0.0.1:4310`. Реализованы:
+The service listens on `http://127.0.0.1:4310`. Implemented endpoints:
 
-- `POST /v1/imports/sgf` — SGF collection → drafts;
-- `GET /v1/drafts` и `GET /v1/drafts/:id`;
-- `PATCH /v1/drafts/:id` — подтверждение цели и target group с `If-Match`;
-- `POST /v1/jobs` — идемпотентный запуск `tsumego.js` или GNU Go Owl с `Idempotency-Key`;
-- `GET /v1/jobs/:id` — статус и raw artifacts;
+- `POST /v1/imports/sgf` — SGF collection to drafts;
+- `GET /v1/drafts` and `GET /v1/drafts/:id`;
+- `PATCH /v1/drafts/:id` — confirm goal and target group with `If-Match`;
+- `POST /v1/jobs` — idempotently start `tsumego.js` or GNU Go Owl with `Idempotency-Key`;
+- `GET /v1/jobs/:id` — status and raw artifacts;
 - `GET /health`.
 
-Очередь и drafts пока находятся в памяти и пропадают после рестарта. Это вертикальный срез API, а не production storage.
+The queue and drafts are in memory and disappear after restart. This is an API vertical slice, not production storage.
 
-## Проверка SGF без автоматического принятия цели
+## Probe SGF without accepting an inferred goal
 
 ```bash
 npm run probe --workspace @goba/generator -- /path/to/collection.sgf 1 4
 ```
 
-Команда строит несколько гипотез из target candidates, запускает каждую в отдельном процессе и печатает JSONL. Метка `automated-hypothesis-only` означает, что результат требует проверки куратора. Для первого примера Cho все гипотезы выходят за ограниченную область `tsumego.js`.
+The command builds hypotheses from target candidates, runs each in a separate process, and prints JSONL. `automated-hypothesis-only` requires curator review. Every hypothesis for the first Cho example exceeds the small bounded region supported by `tsumego.js`.
 
-## GNU Go на macOS
+## GNU Go on macOS
 
 ```bash
 brew install gnu-go
@@ -43,18 +43,18 @@ npm run probe:gnugo --workspace @goba/generator -- \
   /path/to/collection.sgf 8 1 4 /private/tmp/goba-gnugo-probe
 ```
 
-Аргументы после файла: номер первой задачи (с 1), число задач, максимум target-гипотез, каталог артефактов. Команда сохраняет Owl SGF trees и JSONL summary. Результат всегда имеет `status: "unknown"` и `verification: "heuristic-candidate-only"`: GNU Go используется для кандидатов и веток, а не для автоматического подтверждения решения.
+Arguments after the file are the one-based first problem, count, maximum target hypotheses, and artifact directory. The command writes Owl SGF trees and JSONL. Results always remain `status: "unknown"` and `verification: "heuristic-candidate-only"`: GNU Go proposes candidates and branches but never proves them for publication.
 
-## Связать printable answer key
+## Link a printable answer key
 
 ```bash
 npm run link:printable-key --workspace @goba/generator -- \
   /path/to/cho-1.sgf /path/to/go-problems.json /private/tmp/cho-answer-links.json
 ```
 
-Команда не копирует corpus в проект. Она хеширует оба restricted source, извлекает root moves/printable line и ставит `linkedDraftId` только при точном совпадении setup и отсутствии ошибок разбора. В проверенных локальных файлах безопасно связались 845/900 записей; 55 постановок различаются, одна из них также содержит строку неверной ширины.
+The command does not copy the corpus into the project. It hashes both restricted sources, extracts root moves/printable lines, and assigns `linkedDraftId` only after exact setup matching and successful parsing. The checked local inputs linked 845/900 records; 55 setups differ and one also has a malformed row.
 
-## Полный GNU Go audit книги
+## Full GNU Go book audit
 
 ```bash
 npm run audit:gnugo-book --workspace @goba/generator -- \
@@ -62,4 +62,4 @@ npm run audit:gnugo-book --workspace @goba/generator -- \
   /private/tmp/goba-cho-gnugo-audit 1 900 4
 ```
 
-Audit проверяет все target-гипотезы, всю доступную printable line, каждый ход линии через `RulesAdapter` и каждую сохранённую ветвь Owl tree. Отчёт checkpoint-ится каждые 10 задач и продолжает незавершённый прогон при повторном запуске. Дополнительные ходы остаются `unclassified`; совпадение не превращает эвристический Owl output в proof.
+The audit checks every target hypothesis, every available printable line through `RulesAdapter`, and every saved Owl branch. It checkpoints every 10 problems and resumes. Additional moves stay `unclassified`; agreement never turns heuristic Owl output into proof.

@@ -38,6 +38,12 @@ button { font: inherit; }
   height: 48px;
 }
 
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -77,6 +83,19 @@ button { font: inherit; }
 }
 .topbar-link-disabled { cursor: default; opacity: .55; }
 .topbar-link:focus-visible { outline: 2px solid #266d5a; outline-offset: 3px; }
+
+.topbar-icon-link {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 11px;
+  color: #36564b;
+  background: #e7e6df;
+  font-size: 1.2rem;
+  text-decoration: none;
+}
+.topbar-icon-link:focus-visible { outline: 2px solid #266d5a; outline-offset: 3px; }
 
 .practice-heading {
   padding: 24px 4px 18px;
@@ -240,6 +259,67 @@ button { font: inherit; }
 .reset-confirmation button:last-of-type { color: #263c34; background: #e7e6df; }
 .storage-note { margin: 22px 0 0; color: #7a837e; font-size: .78rem; text-align: center; }
 
+.settings-page { padding: 42px 4px 24px; }
+.settings-heading h1 {
+  margin: 0 0 28px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.4rem, 11vw, 3.6rem);
+  font-weight: 500;
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+.settings-card {
+  margin: 0;
+  padding: 20px;
+  border: 0;
+  border-radius: 16px;
+  background: #ebe9e1;
+}
+.settings-card legend {
+  float: left;
+  width: 100%;
+  margin: 0 0 5px;
+  padding: 0;
+  font-size: 1.05rem;
+  font-weight: 760;
+}
+.settings-card p {
+  clear: both;
+  margin: 0 0 16px;
+  color: #66726c;
+  font-size: .88rem;
+}
+.language-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  padding: 4px;
+  border-radius: 13px;
+  background: #dcdad1;
+}
+.language-switch label {
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #53615b;
+  cursor: pointer;
+  font-weight: 720;
+}
+.language-switch label.selected {
+  color: #fff;
+  background: #173f34;
+  box-shadow: 0 2px 8px rgba(23, 63, 52, .16);
+}
+.language-switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+.language-switch label:has(input:focus-visible) { outline: 2px solid #266d5a; outline-offset: 3px; }
+
 @media (max-width: 390px) {
   .reset-confirmation { grid-template-columns: 1fr 1fr; }
   .reset-confirmation span { grid-column: 1 / -1; }
@@ -311,6 +391,10 @@ button { font: inherit; }
 
 @media (max-width: 380px) {
   .app-shell { padding-inline: 12px; }
+  .brand { gap: 7px; font-size: .8rem; letter-spacing: .05em; }
+  .brand-mark { width: 30px; height: 30px; }
+  .topbar-nav { gap: 5px; }
+  .topbar-link { padding-inline: 10px; font-size: .83rem; }
   .practice-heading { padding-top: 22px; }
   .board-focus { min-height: 300px; padding-inline: 4px; }
 }

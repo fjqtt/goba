@@ -6,6 +6,7 @@ import {
 } from '@sabaki/shudan';
 import { colorToSign, pointToVertex, vertexToPoint, type Color } from '@goba/problem-contract';
 import { useEffect, useMemo, useRef, useState, type ComponentType, type KeyboardEvent } from 'react';
+import { translate, type Language } from '../i18n';
 
 // Shudan is implemented with Preact but the build aliases its runtime to React.
 // Its published declaration still names Preact's ComponentClass, so normalize
@@ -17,6 +18,7 @@ type Props = {
   viewport: { x0: number; y0: number; x1: number; y1: number };
   toPlay: Color;
   disabled?: boolean;
+  language: Language;
   onMove: (point: number) => void;
 };
 
@@ -25,6 +27,7 @@ export function BoardAdapter({
   viewport,
   toPlay,
   disabled = false,
+  language,
   onMove,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -72,13 +75,13 @@ export function BoardAdapter({
   };
 
   return (
-    <section className="board-card" aria-label="Доска го">
+    <section className="board-card" aria-label={translate(language, 'goBoard')}>
       <div
         className="board-focus"
         ref={containerRef}
         role="grid"
         tabIndex={disabled ? -1 : 0}
-        aria-label="Доска. Стрелки выбирают точку, Enter делает ход."
+        aria-label={translate(language, 'boardKeyboardHelp')}
         onKeyDown={onKeyDown}
         onPointerCancel={() => { pressedRef.current = null; }}
       >

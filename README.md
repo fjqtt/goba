@@ -1,16 +1,16 @@
 # Go practice
 
-Два проекта для тренировки цумэго:
+Two projects for tsumego practice:
 
-- [`client/`](client/) — offline-first PWA и будущий публичный API. [План](client/PLAN.md), [checklist](client/PROGRESS.md).
-- [`generator/`](generator/) — генератор проверенных задач. [План](generator/PLAN.md), [checklist](generator/PROGRESS.md).
-- [`packages/problem-contract/`](packages/problem-contract/) — общий формат ProblemV1, правила и replay validation.
+- [`client/`](client/) — offline-first PWA and a future public API. [Plan](client/PLAN.md), [checklist](client/PROGRESS.md).
+- [`generator/`](generator/) — generator for verified problems. [Plan](generator/PLAN.md), [checklist](generator/PROGRESS.md).
+- [`packages/problem-contract/`](packages/problem-contract/) — shared ProblemV1 format, rules, and replay validation.
 
-**Следующему агенту: начать с [HANDOFF.md](HANDOFF.md).**
+**New agents should start with [HANDOFF.md](HANDOFF.md).**
 
-## Локальная разработка
+## Local development
 
-Node.js 22.12+ (рекомендуется актуальный Node 22 LTS), npm 10+.
+Node.js 22.12+ (current Node 22 LTS recommended), npm 10+.
 
 ```sh
 npm ci
@@ -20,15 +20,16 @@ npm test
 npm run build
 ```
 
-`npm run preview` запускает production-сборку для проверки service worker. Dev-сервер service worker не регистрирует.
+`npm run preview` serves the production build for service-worker testing. The development server does not register the service worker.
 
-## Тестовый GitHub Pages
+## Test deployment on GitHub Pages
 
-Workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) проверяет типы и тесты, собирает Client с base path `/goba/` и публикует `client/dist`:
+The [`.github/workflows/pages.yml`](.github/workflows/pages.yml) workflow checks types and tests, builds Client with the `/goba/` base path, and publishes `client/dist`:
 
-- практика: `https://fjqtt.github.io/goba/practice/today`;
-- статистика: `https://fjqtt.github.io/goba/statistics`.
+- practice: `https://fjqtt.github.io/goba/practice/today`;
+- statistics: `https://fjqtt.github.io/goba/statistics`;
+- settings: `https://fjqtt.github.io/goba/settings`.
 
-Pack имеет статус `LicenseRef-Restricted-Research`; тестовый Pages deployment не является разрешённым публичным каталогом.
+The pack is marked `LicenseRef-Restricted-Research`. This test deployment is not an authorized public catalog.
 
-Коммиты и push выполняются только после согласования с владельцем.
+Commits and pushes require the owner's prior approval.

@@ -1,25 +1,25 @@
-# Cho elementary: сверка 55 несовпавших постановок
+# Cho elementary: reconciliation of 55 setup mismatches
 
-Проверено 2026-09-16. Все входы и производные артефакты имеют статус `restricted`.
+Checked on 2026-09-16. Every input and derived artifact is `restricted`.
 
-## Почему постановки разошлись
+## Why the setups differ
 
-В `tsumego-pdf` нумерованные символы одновременно кодируют ход решения и цвет камня после проигрывания линии. Функция `give_resulting_board` ставит эти ходы на доску и возвращает итоговую диаграмму. Поэтому простое чтение итоговой диаграммы как начального setup добавляет в задачу камни решения.
+In `tsumego-pdf`, numbered symbols encode both solution moves and the stone color after the line is played. `give_resulting_board` places those moves and returns the resulting diagram. Reading that diagram as an initial setup therefore adds solution stones to the problem.
 
-Это подтверждено не эвристикой по номеру задачи, а точным сравнением камней:
+Exact stone comparison, rather than problem-number heuristics, showed:
 
-- у **46** записей SGF setup полностью совпадает с printable diagram, если нумерованные камни включить в отображённую позицию;
-- после удаления нумерованных ходов получается отдельный base-position candidate;
-- у задачи **201** одна строка имеет ширину 18; семантически однозначное исправление, сохраняющее левый board-edge marker на месте, — пустая точка сразу после него;
-- у **8** задач совпадения нет даже после учёта нумерованного overlay, поэтому это настоящие различия версий или транскрипции.
+- **46** SGF setups exactly match the printable diagram after numbered stones are included in the displayed position;
+- removing numbered moves produces a separate base-position candidate;
+- problem **201** has an 18-column row; the unique repair that preserves the left-edge marker inserts an empty point immediately after it;
+- **8** problems still do not match and are real edition/transcription differences.
 
-Важно: upstream playout удаляет захваченные камни, но не запрещает самоубийство. Независимый replay нашёл `suicide` в printable line у задач **57, 103, 108, 200, 249, 282, 537, 640, 690, 746**. Эти 10 записей нельзя автоматически считать восстановленными корректными задачами.
+The upstream playout removes captures but allows suicide. Independent replay found `suicide` in printable lines for **57, 103, 108, 200, 249, 282, 537, 640, 690, 746**. They cannot be accepted automatically.
 
-## Восемь настоящих setup-различий
+## Eight real setup differences
 
-Координаты показывают камни, присутствующие только в одной версии.
+Coordinates list stones found only in one version.
 
-| № | B только key | B только SGF | W только key | W только SGF |
+| No. | B only in key | B only in SGF | W only in key | W only in SGF |
 |---:|---|---|---|---|
 | 4 | — | — | C15 | — |
 | 8 | — | — | — | H17 |
@@ -30,30 +30,30 @@
 | 533 | B16 | — | C19 D19 A15 B15 C15 | B19 E19 D18 A16 B16 |
 | 617 | — | — | — | A16 |
 
-Перенос решения между этими версиями по одному номеру запрещён. Обе версии переданы KataGo отдельно; итоговое сравнение находится в `KATAGO_CROSSCHECK.md`.
+A solution must not be transferred between these editions by problem number alone. Both versions were sent to KataGo; see `KATAGO_CROSSCHECK.md`.
 
-KataGo даёт следующую очередь разбора:
+KataGo triage:
 
-- **40, 420:** printable line заметно лучше ранжируется на SGF-постановке;
-- **533, 617:** SGF-постановка делает один из ходов printable line занятым; key-постановка остаётся легальной и является лучшим кандидатом;
-- **216:** обе версии линии незаконны (`suicide` в key, `occupied` в SGF), обе отклоняются до исправления контента;
-- **4, 8, 93:** обе постановки дают одинаковый root rank 1, результат неразличим;
+- **40, 420:** the printable line ranks substantially better on the SGF setup;
+- **533, 617:** the SGF setup occupies a printable-line move; the key setup remains legal and is the better candidate;
+- **216:** both lines are illegal (`suicide` in the key, `occupied` in SGF) and remain rejected;
+- **4, 8, 93:** both setups give root rank 1 and are inconclusive.
 
-Это triage, а не автоматическое принятие: KataGo запускался как локальный ranking signal, без proof конкретной target-группы.
+This is ranking triage, not acceptance. KataGo did not prove the target group.
 
-## GNU Go на 47 base-position candidates
+## GNU Go on 47 base-position candidates
 
-| Класс | Задач |
+| Class | Problems |
 |---|---:|
 | Full printable line | 1 |
 | Partial line | 1 |
-| Только root | 19 |
-| Ни одна target-группа не приняла root | 16 |
-| Printable line незаконна по `ld-v1` | 10 |
+| Root only | 19 |
+| No target group accepted the root | 16 |
+| Printable line illegal under `ld-v1` | 10 |
 
-Этот результат не повышает candidates до готового каталога. Он показывает, что механическое удаление сыгранных камней объясняет структуру данных, но не исправляет дефекты самого community key.
+Mechanical removal explains the data structure but does not repair defects in the community key.
 
-## Воспроизведение
+## Reproduce
 
 ```bash
 npm run reconcile:printable-key --workspace @goba/generator -- \
@@ -66,7 +66,7 @@ npm run audit:gnugo-book --workspace @goba/generator -- \
   /private/tmp/goba-cho-reconciliation/gnugo-audit 1 900 4
 ```
 
-Артефакты:
+Artifacts:
 
 - `/private/tmp/goba-cho-reconciliation/reconciliation-report.json`
 - `/private/tmp/goba-cho-reconciliation/corrected-positions.sgf`

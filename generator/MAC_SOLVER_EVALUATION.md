@@ -1,48 +1,46 @@
 # Mac solver feasibility checkpoint
 
-Проверено 2026-09-16 на Apple M1 Pro (`arm64`, macOS) для задач первого тома Чо.
+Checked on 2026-09-16 on an Apple M1 Pro (`arm64`, macOS) using Cho volume-one problems.
 
-## Решение
+## Decision
 
-Для локальной разработки выбран **GNU Go 3.8 Owl** как CPU lane для поиска кандидатов и выгрузки частичного SGF-дерева. Он запускается нативно на Apple Silicon, принимает SGF/GTP и не требует Docker или GPU. Его результат остаётся `unknown` с меткой `heuristic-candidate-only`: Owl ограничен эвристиками и node limits, поэтому ответ нельзя автоматически публиковать как доказанный.
+Use **GNU Go 3.8 Owl** as the local CPU lane for candidate moves and partial SGF trees. It runs natively on Apple Silicon, accepts SGF/GTP, and requires neither Docker nor a GPU. Output remains `unknown/heuristic-candidate-only`: Owl is heuristic and node-limit dependent, so it cannot publish a proof automatically.
 
-KataGo с Metal оставлен для policy/PV и ранжирования правдоподобных ходов. Он оптимизирует результат всей партии, поэтому даже локальный `allowMoves` не превращает Analysis API в решатель tsumego.
+Keep KataGo Metal for policy/PV and plausible-move ranking. Its whole-game objective means that even local `allowMoves` does not turn Analysis API into a tsumego proof engine.
 
-## Измерения
+## Measurements
 
-| Вариант | Запуск на этом Mac | Измеренный результат | Роль |
+| Option | Runs on this Mac | Measured result | Role |
 |---|---|---|---|
-| GNU Go 3.8 Owl | Нативный Homebrew arm64, 7.9 MiB | На 37 размеченных upstream Cho fixtures первый ход совпал в 27; авторский ход принят `owl_does_defend` в 33. Углублённые limits результат не изменили; 37 позиций заняли 5.14 s | Кандидаты, альтернативы, partial SGF tree; всегда review |
-| KataGo 1.16.2 | Нативный Metal | Малый benchmark: 103.86 visits/s при 1 thread. На первой позиции Чо unrestricted analysis выбрал глобальные ходы; локальный список ходов изменил поиск, но не дал L&D proof | Policy/PV, ranking, второе мнение |
-| Cameron tsumego-solver 0.1.3 | x86_64 binary работает через Rosetta | CLI предоставляет интерактивный `explore`, но не headless export решения; representation ограничен 16×8 битовой доской с явной маской | Не интегрировать |
-| rzone | Официальный `linux/amd64` image можно эмулировать | Caffe2 path требует CUDA/NVIDIA, которых на Apple Silicon Docker нет | Отдельный Linux/CUDA worker |
+| GNU Go 3.8 Owl | Native Homebrew arm64, 7.9 MiB | On 37 labeled upstream Cho fixtures, first move matched 27 and `owl_does_defend` accepted the author move in 33. Higher limits did not change results; 37 positions took 5.14 s | Candidates, alternatives, partial SGF; always reviewed |
+| KataGo 1.16.2 | Native Metal | Small benchmark: 103.86 visits/s at one thread. Unrestricted Cho analysis chose global moves; local move lists changed search but gave no L&D proof | Policy/PV, ranking, second opinion |
+| Cameron tsumego-solver 0.1.3 | x86_64 under Rosetta | Interactive `explore`, no headless solution export; 16×8 bitboard with explicit mask | Do not integrate |
+| rzone | Official `linux/amd64` image can be emulated | Caffe2 path requires unavailable CUDA/NVIDIA | Separate Linux/CUDA worker |
 
-GNU Go прямо документирует `--decide-owl`, который записывает SGF variation tree, и GTP-команды `owl_attack`, `owl_defend`, `owl_does_attack`, `owl_does_defend`. Документация также предупреждает, что результат зависит от ограничений Owl и увеличение node limit не обязательно повышает силу. Источники: [GNU Go usage](https://www.gnu.org/software/gnugo/gnugo_3.html), [GTP commands](https://www.gnu.org/software/gnugo/gnugo_19.html), [Owl reading](https://www.gnu.org/software/gnugo/gnugo_11.html), [Homebrew formula](https://formulae.brew.sh/formula/gnu-go).
+GNU Go documents `--decide-owl` SGF output and the relevant GTP commands, while warning that Owl depends on limits and higher node limits do not necessarily improve strength: [usage](https://www.gnu.org/software/gnugo/gnugo_3.html), [GTP](https://www.gnu.org/software/gnugo/gnugo_19.html), [Owl](https://www.gnu.org/software/gnugo/gnugo_11.html), [Homebrew](https://formulae.brew.sh/formula/gnu-go).
 
-KataGo собирается с Metal на macOS и имеет streaming Analysis API, но его output — оценки, policy и PV, а не proof tree. Источники: [KataGo compilation](https://github.com/lightvector/KataGo/blob/master/Compiling.md), [Analysis Engine](https://github.com/lightvector/KataGo/blob/master/docs/Analysis_Engine.md).
+KataGo supports Metal and a streaming Analysis API, but returns estimates, policy, and PV rather than a proof tree: [compilation](https://github.com/lightvector/KataGo/blob/master/Compiling.md), [Analysis Engine](https://github.com/lightvector/KataGo/blob/master/docs/Analysis_Engine.md).
 
-## Реальный прогон скачанного SGF
-
-Команда:
+## Real downloaded-SGF run
 
 ```bash
 npm run probe:gnugo --workspace @goba/generator -- \
   /private/tmp/cho-1.sgf 8 1 4 /private/tmp/goba-gnugo-cho-8
 ```
 
-Импортировано 900 drafts с hash `sha256:2667ddc1f73d9256820a598427ae212be78874c33932c5baf99d97793d8df432`. Для задачи 8 автоматически рассмотрены три target-группы. Для чёрной группы GNU Go предложил `A18`, совпадающий с известным первым ходом, и сохранил дерево из 10 атакующих и 8 защитных вариаций. Он также принял `H19` как альтернативу, которой нет в имеющемся ключе; это конкретный пример, почему вывод остаётся гипотезой до независимой проверки.
+Imported 900 drafts with SHA-256 `2667ddc1f73d9256820a598427ae212be78874c33932c5baf99d97793d8df432`. Problem 8 produced three target hypotheses. For the black group, GNU Go proposed the known `A18` and saved 10 attack plus 8 defense variations. It also accepted `H19`, absent from the available key, demonstrating why output remains a hypothesis.
 
-Артефакт: `/private/tmp/goba-gnugo-cho-8/problem-8-candidate-608-b.sgf`.
+Artifact: `/private/tmp/goba-gnugo-cho-8/problem-8-candidate-608-b.sgf`.
 
-## Источник первых ходов
+## First-move source
 
-[`travisgk/tsumego-pdf`](https://github.com/travisgk/tsumego-pdf) содержит ключ для всех 900 elementary-позиций. Он годится для связывания root moves, но не содержит полных интерактивных деревьев и сам указывает, что права на исходные задачи и community-sourced solutions не установлены однозначно; см. [LICENSE/disclaimer](https://github.com/travisgk/tsumego-pdf/blob/main/LICENSE). Поэтому данные хранятся как `restricted`, используются только для исследования и не публикуются автоматически.
+[`travisgk/tsumego-pdf`](https://github.com/travisgk/tsumego-pdf) has a key for all 900 elementary positions, but no full interactive trees and unclear rights for source problems/community solutions; see its [disclaimer](https://github.com/travisgk/tsumego-pdf/blob/main/LICENSE). Data therefore remains `restricted` research material.
 
-Детерминированная сверка `cho-1.sgf` с этим ключом дала **845/900** точных совпадений setup. Ещё 55 записей не связаны: постановки отличаются; у problem 201 дополнительно строка диаграммы имеет ширину 18 вместо 19. В части несовпадений numbered solution overlays превратились в обычные setup stones в одном из источников. Автоматически переносить ответы по одному номеру задачи нельзя. Manifest записан в `/private/tmp/goba-cho-answer-links.json`; hash ключа `sha256:742af89d57931488e6f3b6e90732481a94809bc1a3b8f3fd386f5e2ff72f416d`.
+Deterministic matching with `cho-1.sgf` found **845/900** exact setups. Fifty-five differ; problem 201 has an 18-column row. Some numbered solution overlays became setup stones in one source. Answers must not be transferred by number alone. Manifest: `/private/tmp/goba-cho-answer-links.json`; key hash `sha256:742af89d57931488e6f3b6e90732481a94809bc1a3b8f3fd386f5e2ff72f416d`.
 
-## Следующий gate
+## Next gate
 
-1. Импортировать 845 точно связанных root records как отдельные restricted annotations с provenance; 55 несовпадений оставить в review queue.
-2. Прогнать GNU Go по связанным задачам и разделить совпадения, дополнительные ходы и расхождения.
-3. Нормализовать Owl SGF в candidate tree, проиграть каждое ребро через `RulesAdapter` и проверить terminal predicates.
-4. Ни совпадение с ключом, ни согласие GNU Go/KataGo не заменяют curator/expert gate.
+1. Store the 845 exact roots as restricted annotations with provenance; keep 55 in review.
+2. Run GNU Go and separate agreement, extra moves, and disagreement.
+3. Normalize Owl SGF, replay every edge, and verify terminal predicates.
+4. Neither key agreement nor GNU Go/KataGo agreement replaces curator/expert review.

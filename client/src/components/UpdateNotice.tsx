@@ -1,8 +1,9 @@
 import { useRegisterSW } from 'virtual:pwa-register/react';
+import { translate, type Language } from '../i18n';
 
-type Props = { safeToUpdate: boolean };
+type Props = { safeToUpdate: boolean; language: Language };
 
-export function UpdateNotice({ safeToUpdate }: Props) {
+export function UpdateNotice({ safeToUpdate, language }: Props) {
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
@@ -11,9 +12,9 @@ export function UpdateNotice({ safeToUpdate }: Props) {
   if (needRefresh && safeToUpdate) {
     return (
       <aside className="update-notice" role="status">
-        <p><strong>Обновление готово</strong><span>Попытка сохранена.</span></p>
-        <button type="button" onClick={() => void updateServiceWorker(true)}>Обновить</button>
-        <button className="notice-close" type="button" aria-label="Отложить обновление" onClick={() => setNeedRefresh(false)}>×</button>
+        <p><strong>{translate(language, 'updateReady')}</strong><span>{translate(language, 'attemptSaved')}</span></p>
+        <button type="button" onClick={() => void updateServiceWorker(true)}>{translate(language, 'update')}</button>
+        <button className="notice-close" type="button" aria-label={translate(language, 'postponeUpdate')} onClick={() => setNeedRefresh(false)}>×</button>
       </aside>
     );
   }

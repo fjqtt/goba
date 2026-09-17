@@ -3,7 +3,6 @@ import { db } from '../storage/database';
 import { installPack } from '../storage/pack-installer';
 
 export const CHO_COLLECTION_ID = 'cho-chikun-elementary-local-candidates-v1';
-export const CHO_COLLECTION_TITLE = 'Чо Чикун · Начальный уровень';
 export const CHO_PACK_ID = 'cho-chikun-elementary-local-candidates';
 export const CHO_PACK_REVISION = 1;
 export const CHO_PROBLEM_COUNT = 861;
