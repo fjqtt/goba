@@ -1,6 +1,6 @@
 # Handoff
 
-Last updated: 2026-09-17, Europe/Lisbon.
+Last updated: 2026-09-18, Europe/Lisbon.
 
 ## Current state
 
@@ -20,11 +20,24 @@ Current GitHub Pages deployment:
 
 Russian/English localization and `/settings` were committed as `2faddca` and deployed successfully by GitHub Actions run `35251645341`.
 
-Commit `3f1023c` removed the horizontal scrollbar but made the board visibly clipped on the reporting phone. Do not continue that sizing approach. The current uncommitted correction replaces Shudan's iterative `BoundedGoban` measurement with a directly calculated integer vertex size based on visible rows/columns, two coordinate cells, the CSS border, available content width, and the 520 px height cap. A 4 px fit inset covers browser rounding. The existing overflow clipping now acts only as a safety net because the renderer itself is bounded.
+The mobile board-sizing correction was committed as `de4ed1c` and deployed successfully by GitHub Actions run `35253968588`. Real-phone feedback after that deployment said the layout looked acceptable.
 
 The bundled Cho pack is public because this is a requested test deployment, but its status remains `LicenseRef-Restricted-Research`. Do not describe it as rights-cleared or expert verified.
 
-## Active work completed in this checkpoint
+## High-priority content incident — 2026-09-18
+
+The first real practice test exposed that the current Cho pack does not implement the intended one-attempt learning experience.
+
+- Across all 861 published problems, all 2,670 explicit edges are `correct`.
+- The pack has zero wrong edges, zero failure terminals, and zero prepared refutations.
+- Every node defaults a missing move to `unclassified`.
+- The Client therefore correctly shows “This move has not been verified. Try another one.” and leaves the board unchanged. A learner can probe until finding a listed solution; no wrong result or mistake-review item can be created from this pack.
+- Screenshot problem `cho-elementary-0030` is also a likely invalid or already-settled exercise. GNU Go's selected candidate proposed `PASS`, exported an empty tree, and matched zero source plies. A17 was admitted only through a positive `owl_does_defend` query. KataGo ranked A17 22nd at the root.
+- The pack builder accepted this because its publication gate requires only a selected target, a legal printable line, and expected roots. It generates a success terminal from the goal type and hard-codes `solver-checked`; it does not verify the terminal or require refutations.
+
+The complete evidence, counts, scope, and required gates are in `client/content/CHO_PACK_PRODUCT_AUDIT.md`. Treat the current pack as an ungraded candidate-line viewer, not a reliable graded catalog. No code, generated content, or deployment was changed during this investigation.
+
+## Earlier completed application work
 
 ### Russian/English interface
 
@@ -75,8 +88,8 @@ All repository Markdown documentation was rewritten in English. Architecture, ga
 - One-tap stone placement, 420 ms opponent delay, minimal side-to-play UI.
 - Deterministic ProblemV1 interpreter with legality first, explicit replies, state-hash replay, and checkpoint restore.
 - A missing/unclassified branch is neutral and never recorded as wrong.
-- Persisted shuffled collection run with one graded attempt.
-- Results: correct/wrong, continue new problems, rotate mistakes until corrected.
+- Persisted shuffled collection run with one graded attempt when content reaches an explicit terminal; the current Cho pack cannot reach a wrong terminal.
+- Result handling supports correct/wrong, continuing to new problems, and rotating mistakes until corrected; only the correct path is reachable in the current Cho pack.
 - Separate `/statistics` page with total/correct/wrong/unseen/accuracy and confirmed reset.
 - Reset atomically clears collection results, active session, review events, FSRS cards, and outbox while preserving installed packs, device identity, and preferences.
 - Best-effort `navigator.storage.persist()`.
@@ -168,6 +181,7 @@ Current localization/settings block:
 - The published bundle is `assets/index-DnapFNC2.js` and contains `interface-language`, `Quiet Move`, `Main navigation`, and `Settings`.
 - After the board-width fix: `npm run check` passed; `npm test -- --run` passed with 21 files / 58 tests; `VITE_BASE_PATH=/goba/ npm run build --workspace @goba/client` passed with 20 precache entries / 2364.41 KiB.
 - After the clipping report and direct-sizing correction: `npm run check` passed; `npm test -- --run` passed with 22 files / 62 tests. The sizing regression covers 286 px and 341 px mobile content widths plus wider/full-board cases, and asserts both width and height bounds. The `/goba/` production build passed with 20 precache entries / 2363.51 KiB.
+- For the 2026-09-18 content incident, direct scans of all nine checked-in shards confirmed 861 problems, 3,531 nodes, 2,670 `correct` edges, zero `wrong` edges, 1,064 success terminals, zero failure terminals, and `listed-only`/`unclassified` coverage on every node. The exact and reconciled GNU Go reports and the KataGo cross-check report were re-read for problem 30 and the pack-wide risk counts. `git diff --check` passed, every local Markdown link resolved, and the Markdown Cyrillic scan returned no output. No application code changed, so the test suite was not rerun for this documentation-only checkpoint.
 
 Previous deployment:
 
@@ -184,17 +198,19 @@ Visual QA was not completed: the in-app browser provider is unavailable in this 
 - Arbitrary future content explanations are shown verbatim unless added to the translation mapping.
 - Shudan pan/zoom and real mobile gesture QA remain incomplete.
 - No expert-verified, rights-cleared release catalog exists.
-- Missing refutation branches mean many legal alternative moves stay `unclassified`; they must not end an attempt as wrong.
+- The current Cho pack has no refutation branches at all. Every unlisted legal move stays `unclassified`, making a wrong result unreachable for this pack. This is a release-blocking mismatch with one-attempt practice, not a rare edge case.
 - Local progress can still be evicted by the browser. Export and server sync are not implemented.
 - Node on the work machine is 23.6.0 while the project declares 22.12 or ≥24; builds pass with an engine warning.
 - `@sabaki/shudan@1.8.0` has an existing unmet peer declaration for Preact; Vite aliases it to React and builds pass.
 
 ## Next concrete steps
 
-1. Commit and deploy the pending direct board-sizing correction after the required user approval, then confirm that the full board is visible without horizontal scrolling on the reporting phone.
-2. On a real iPhone, also verify Russian/English switching persists after force quit, direct settings/statistics routes, unfinished-attempt restore, offline reopen, and reset.
-3. Confirm header fit and tap targets at 375/390 px plus VoiceOver labels.
-4. Resume content work with the 27 legal excluded candidates and the 254-state KataGo review queue. Keep all uncertain branches neutral.
+1. Wait for product direction before applying a fix; this checkpoint was explicitly analysis-only.
+2. Decide whether to disable grading for the current candidate pack or quarantine it from practice while content is rebuilt.
+3. Add publication gates for wrong/refutation coverage, independent terminal verification, `PASS`/already-settled detection, solver-review blockers, and evidence-accurate verification labels.
+4. Quarantine and manually review problem 30 plus the other explicit-`PASS`, empty-tree, and root-only records before graded publication.
+5. Build at least one end-to-end acceptance case that reaches a prepared refutation, failure terminal, stored wrong result, and mistake rotation.
+6. Continue real-iPhone checks for language persistence, direct routes, restore, offline reopen, reset, header fit, tap targets, and VoiceOver.
 
 ## Git rule
 

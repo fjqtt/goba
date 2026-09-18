@@ -18,6 +18,8 @@ Client traverses a catalog independently of how it was obtained. Every problem n
 
 The pack remains `LicenseRef-Restricted-Research` and must not be described as an authorized public catalog. Solution lines come from a community printable key. Missing branches remain `unclassified` and never become `wrong` automatically.
 
+**Product warning:** the current 861-problem pack has no explicit wrong edges, failure terminals, or prepared refutations. It cannot produce a wrong result and is not suitable for graded one-attempt practice. Problem 30 also exposed a publication-gate failure in which a heuristic candidate was labeled `solver-checked` without terminal proof. See [CHO_PACK_PRODUCT_AUDIT.md](CHO_PACK_PRODUCT_AUDIT.md) for the incident analysis, counts, and required gates. No remediation has been applied yet.
+
 Reproduction command:
 
 ```bash
