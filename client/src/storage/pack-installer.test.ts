@@ -29,6 +29,24 @@ describe('staged pack install', () => {
     expect((await db.settings.get('active-pack:starter'))?.value).toBe('starter:1');
   });
 
+  it('deletes the superseded revision when a newer one activates', async () => {
+    const problem = await createSampleProblem();
+    const bytes = new TextEncoder().encode(JSON.stringify([problem]));
+    const sha256 = await hashBytes(bytes);
+    await installPack('https://cdn.example/packs/starter/1/manifest.json', {
+      clientVersion: '0.1.0', fetch: mockFetch(makeManifest(bytes, sha256), bytes),
+    });
+    await installPack('https://cdn.example/packs/starter/2/manifest.json', {
+      clientVersion: '0.1.0', fetch: mockFetch({ ...makeManifest(bytes, sha256), revision: 2 }, bytes),
+    });
+
+    expect(await db.packs.get('starter:1')).toBeUndefined();
+    expect(await db.problems.where('packKey').equals('starter:1').count()).toBe(0);
+    expect((await db.packs.get('starter:2'))?.state).toBe('ready');
+    expect(await db.problems.where('packKey').equals('starter:2').count()).toBe(1);
+    expect((await db.settings.get('active-pack:starter'))?.value).toBe('starter:2');
+  });
+
   it('retains staged diagnostics and does not activate a corrupt shard', async () => {
     const problem = await createSampleProblem();
     const bytes = new TextEncoder().encode(JSON.stringify([problem]));

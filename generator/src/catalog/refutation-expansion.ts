@@ -19,7 +19,7 @@ export type WrongBranch = {
 
 export type SkippedCandidate = {
   move: number;
-  reason: 'unrefuted-inconsistent' | 'recovery-found' | 'illegal-refutation' | 'refute-error';
+  reason: 'unrefuted-inconsistent' | 'recovery-found' | 'illegal-refutation' | 'refute-error' | 'ko-conditional';
 };
 
 export type NodeExpansion = {
@@ -49,6 +49,7 @@ export type RefutationReport = {
   solver: string;
   auditReportSha256: string;
   configuration: {
+    pipelineVersion: number;
     maxWrongPerNode: number;
     start: number;
     count: number;

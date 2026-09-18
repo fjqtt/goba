@@ -64,9 +64,13 @@ export async function buildChoClientProblem(input: {
       quantifier: selected.goalKind === 'capture' ? 'all-captured' : 'any-unconditionally-alive',
       seki: 'unsupported', ko: 'unsupported',
     },
+    // Wrong branches and their refutation replies must stay visible on the cropped board.
     viewport: choViewport(input.position, [
       ...input.audit.expectedRootMoves,
       ...input.audit.sourceLine.map(([, point]) => point),
+      ...wrongBranches.flatMap(branch => (
+        branch.refutation === undefined ? [branch.move] : [branch.move, branch.refutation]
+      )),
     ]),
     nodes,
     root: 0,

@@ -30,7 +30,7 @@ export function runGnuGoProcess(
   args: string[],
   input: string | undefined,
   timeoutMs: number,
-): Promise<{ stdout: string }> {
+): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolvePromise, reject) => {
     const child = spawn(executable, args, { stdio: ['pipe', 'pipe', 'pipe'] });
     const stdout: Buffer[] = [];
@@ -61,8 +61,16 @@ export function runGnuGoProcess(
       settled = true;
       clearTimeout(timer);
       if (code !== 0) reject(new Error(Buffer.concat(stderr).toString('utf8') || `GNU Go exited ${code}`));
-      else resolvePromise({ stdout: Buffer.concat(stdout).toString('utf8') });
+      else {
+        resolvePromise({
+          stdout: Buffer.concat(stdout).toString('utf8'),
+          stderr: Buffer.concat(stderr).toString('utf8'),
+        });
+      }
     });
+    // An early GNU Go exit closes the pipe before input is flushed; without this
+    // listener the EPIPE becomes an uncaught exception instead of a rejection.
+    child.stdin.on('error', error => fail(error.message));
     child.stdin.end(input);
   });
 }
@@ -81,6 +89,6 @@ export function gtpVertexToPoint(value: string, size: number): number {
   if (value.toUpperCase() === 'PASS') return -1;
   const column = 'ABCDEFGHJKLMNOPQRSTUVWXYZ'.indexOf(value[0]!.toUpperCase());
   const row = Number.parseInt(value.slice(1), 10);
-  if (column < 0 || !Number.isInteger(row) || row < 1 || row > size) return -1;
+  if (column < 0 || column >= size || !Number.isInteger(row) || row < 1 || row > size) return -1;
   return (size - row) * size + column;
 }

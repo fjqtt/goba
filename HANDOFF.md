@@ -182,6 +182,8 @@ Key research documents:
 
 ## Verification performed
 
+High-effort code review of the refutation branch (2026-09-18) surfaced ten findings; the following were fixed the same day: report-checkpoint temp-file race between workers, missing GTP column bound, unguarded selected-target lookup, ko-conditional Owl codes (2/3) no longer publishable as unconditional wrong branches (pipeline version 2; incompatible or error-status prior results are discarded on resume), refutations report now embeds and the pack builder verifies `auditReportSha256`, a malformed refutation record downgrades one problem instead of aborting the build, stdin EPIPE handling in the shared GNU Go module, screening timeout scales with command count, problem viewports include wrong-branch stones with margin, and the pack installer deletes superseded revisions of the same pack inside the activation transaction. The re-run under version-2 semantics produced identical content (no ko-conditional evidence existed); only viewport margins changed in the rebuilt pack.
+
 Refutation/pack-revision-2 block (2026-09-18):
 
 - `npm run check` — passed.
@@ -241,6 +243,7 @@ Visual QA was not completed: the in-app browser provider is unavailable in this 
 4. Review the recorded review queues: 3 `book-move-rejected` problems (318, 417, 541), 528 alternative-correct candidates, 110 skipped wrong candidates, 254 KataGo disagreement states, and the 26 quarantined explicit-`PASS` problems.
 5. Decide the product policy for problems without refutation coverage (keep neutral retries, hide from graded mode, or show an ungraded badge).
 6. Continue real-iPhone checks for language persistence, direct routes, restore, offline reopen, reset, header fit, tap targets, and VoiceOver; also verify the new failure flow (refutation reply, failure message, mistake rotation) on a real phone.
+7. Deduplicate the GNU Go process/coordinate helpers: `generator/src/solver/gnugo-gtp.ts` is the canonical module for the refutation CLI, but `gnugo-adapter.ts` and `audit-gnugo-book.ts` still carry near-identical private copies (including the unguarded `child.stdin.end` EPIPE pattern fixed only in the shared module).
 
 ## Git rule
 

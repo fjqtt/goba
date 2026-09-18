@@ -29,6 +29,10 @@ import {
 } from '../solver/gnugo-gtp';
 
 const RUN_TIMEOUT_MS = 20_000;
+const PER_COMMAND_TIMEOUT_MS = 1_000;
+const MAX_RUN_TIMEOUT_MS = 120_000;
+/** Bump when screening/refutation semantics change; incompatible prior reports are discarded. */
+const PIPELINE_VERSION = 2;
 
 const [collectionFile, auditFile, katagoResultsFile, artifactDirectoryArg] = process.argv.slice(2);
 if (!collectionFile || !auditFile || !katagoResultsFile || !artifactDirectoryArg) {
@@ -97,7 +101,17 @@ async function main(options: {
   ));
   const positions = new Map(collection.drafts.map((draft, index) => [index + 1, draft.position]));
   const prior = await readReport(reportPath);
-  const completed = new Map((prior?.results ?? []).map(result => [result.problemNumber, result]));
+  const priorCompatible = prior !== undefined
+    && prior.auditReportSha256 === auditReportSha256
+    && prior.configuration.pipelineVersion === PIPELINE_VERSION
+    && prior.configuration.maxWrongPerNode === options.maxWrongPerNode;
+  if (prior && !priorCompatible) {
+    process.stderr.write('Prior report has a different audit hash or configuration; starting fresh.\n');
+  }
+  // Prior error results (timeouts, crashes) are retried instead of being skipped forever.
+  const completed = new Map((priorCompatible ? prior.results : [])
+    .filter(result => result.status !== 'error')
+    .map(result => [result.problemNumber, result]));
   const pending = eligible.filter(result => !completed.has(result.problemNumber));
   let completedThisRun = 0;
 
@@ -150,7 +164,8 @@ async function expandProblem(
   maxWrongPerNode: number,
 ): Promise<ProblemRefutations> {
   const started = performance.now();
-  const selected = audit.candidates.find(candidate => candidate.anchor === audit.selectedTarget)!;
+  const selected = audit.candidates.find(candidate => candidate.anchor === audit.selectedTarget);
+  if (!selected) return errorResult(audit, 'selected-target-not-found');
   const goalKind = selected.goalKind;
   const size = position.boardSize;
   const target = pointToGtpVertex(selected.anchor, size);
@@ -189,10 +204,15 @@ async function expandProblem(
       )));
       const accepted: number[] = [];
       const rejected: number[] = [];
+      let bookMoveCode = 0;
       candidates.forEach((point, index) => {
-        (positiveCode(screen[index]) ? accepted : rejected).push(point);
+        const code = responseCode(screen[index]);
+        if (point === bookMove) bookMoveCode = code;
+        // Any positive code (including ko-conditional 2/3) keeps a move out of the
+        // wrong list; only an unconditional 1 qualifies the printable move itself.
+        (code > 0 ? accepted : rejected).push(point);
       });
-      const bookMoveAccepted = accepted.includes(bookMove);
+      const bookMoveAccepted = bookMoveCode === 1;
       const node: NodeExpansion = {
         ply,
         candidateCount: candidates.length,
@@ -266,6 +286,9 @@ async function refuteCandidate(binary: string, input: {
   const refuteCode = Number.parseInt(refuteParts[0] ?? '0', 10) || 0;
   const refuteMove = refuteParts[1] ?? '';
   if (refuteCode <= 0) return { move, reason: 'unrefuted-inconsistent' };
+  // Owl codes 2/3 succeed only through a ko, which ld-v1 declares unsupported;
+  // such moves must not be graded wrong unconditionally.
+  if (refuteCode !== 1) return { move, reason: 'ko-conditional' };
 
   const replyPoint = refuteMove && refuteMove.toUpperCase() !== 'PASS'
     ? gtpVertexToPoint(refuteMove, position.boardSize)
@@ -314,9 +337,11 @@ async function runOwl(
   await writeFile(sgfPath, positionToSgf(position, forced), 'utf8');
   try {
     const input = `${commands.map((command, index) => `${index + 1} ${command}`).join('\n')}\n${commands.length + 1} quit\n`;
+    // A large screening batch needs more wall time than a single owl query.
+    const timeout = Math.min(MAX_RUN_TIMEOUT_MS, RUN_TIMEOUT_MS + commands.length * PER_COMMAND_TIMEOUT_MS);
     const run = await runGnuGoProcess(binary, [
       '--quiet', '--mode', 'gtp', '--situational-superko', ...owlArguments(), '-l', sgfPath,
-    ], input, RUN_TIMEOUT_MS);
+    ], input, timeout);
     const responses = parseGtpResponses(run.stdout);
     return commands.map((_, index) => {
       const response = responses.find(item => item.id === index + 1);
@@ -327,8 +352,8 @@ async function runOwl(
   }
 }
 
-function positiveCode(body: string | undefined): boolean {
-  return (Number.parseInt(body?.split(/\s+/)[0] ?? '0', 10) || 0) > 0;
+function responseCode(body: string | undefined): number {
+  return Number.parseInt(body?.split(/\s+/)[0] ?? '0', 10) || 0;
 }
 
 function positionToSgf(position: Position, forced: Array<[Color, number]>): string {
@@ -377,6 +402,7 @@ function makeReport(
   options: { maxWrongPerNode: number; start: number; count: number; concurrency: number },
   results: ProblemRefutations[],
 ): RefutationReport {
+  const configuration = { pipelineVersion: PIPELINE_VERSION, ...options };
   const sorted = [...results].sort((left, right) => left.problemNumber - right.problemNumber);
   const summary: Record<string, number> = { total: sorted.length };
   for (const result of sorted) summary[result.status] = (summary[result.status] ?? 0) + 1;
@@ -399,14 +425,16 @@ function makeReport(
     verification: 'heuristic-candidate-only',
     solver: 'GNU Go 3.8 Owl + KataGo policy ranking',
     auditReportSha256,
-    configuration: options,
+    configuration,
     summary,
     results: sorted,
   };
 }
 
 async function writeReport(path: string, report: RefutationReport): Promise<void> {
-  const temporary = `${path}.tmp`;
+  // Unique temporary name: concurrent workers checkpoint independently, and a shared
+  // .tmp path could interleave writes and publish a corrupt report.
+  const temporary = `${path}.${process.pid}-${Math.random().toString(36).slice(2)}.tmp`;
   await writeFile(temporary, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   await rename(temporary, path);
 }

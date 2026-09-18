@@ -25,6 +25,7 @@ if (!collectionFile || !auditFile || !correctedCollectionFile || !correctedAudit
 
 type AuditReport = { results: ChoAuditResult[] };
 type RefutationsReport = {
+  auditReportSha256: string;
   results: Array<{
     problemNumber: number;
     status: string;
@@ -41,14 +42,23 @@ async function main(
   outputDirectoryName: string,
   refutationsName?: string,
 ): Promise<void> {
-  const [collection, audit, correctedCollection, correctedAudit, reconciliation, refutationsReport] = await Promise.all([
+  const auditBytes = await readFile(resolve(auditName));
+  const [collection, correctedCollection, correctedAudit, reconciliation, refutationsReport] = await Promise.all([
     loadCollection(collectionName),
-    loadJson<AuditReport>(auditName),
     loadCollection(correctedCollectionName),
     loadJson<AuditReport>(correctedAuditName),
     loadJson<{ unresolved: Array<{ problemNumber: number; category: string }> }>(reconciliationName),
     refutationsName ? loadJson<RefutationsReport>(refutationsName) : Promise.resolve(undefined),
   ]);
+  const audit = JSON.parse(auditBytes.toString('utf8')) as AuditReport;
+  if (refutationsReport) {
+    const auditSha256 = await hashBytes(new Uint8Array(auditBytes));
+    if (refutationsReport.auditReportSha256 !== auditSha256) {
+      throw new Error(
+        'Refutations report was generated from a different audit report; rerun expand:cho-refutations first',
+      );
+    }
+  }
   const refutationsByProblem = new Map(
     (refutationsReport?.results ?? [])
       .filter(result => result.status === 'expanded' && result.wrongBranches.length > 0)
@@ -62,6 +72,7 @@ async function main(
   }));
   const problems: ProblemV1[] = [];
   const exclusions: Array<{ problemNumber: number; corpus: string; reason: string }> = [];
+  const refutationMergeWarnings: Array<{ problemNumber: number; reason: string }> = [];
   for (const [corpus, report, positions] of [
     ['exact', audit, exactPositions],
     ['reconciled', correctedAudit, correctedPositions],
@@ -76,9 +87,21 @@ async function main(
         continue;
       }
       const refutations = corpus === 'exact' ? refutationsByProblem.get(result.problemNumber) : undefined;
-      const problem = await buildChoClientProblem({
-        audit: result, position, corpus, ...(refutations ? { refutations } : {}),
-      });
+      let problem;
+      try {
+        problem = await buildChoClientProblem({
+          audit: result, position, corpus, ...(refutations ? { refutations } : {}),
+        });
+      } catch (error) {
+        // A malformed refutation record must not abort the whole build; the problem
+        // ships without wrong branches and the mismatch is reported for review.
+        if (!refutations) throw error;
+        refutationMergeWarnings.push({
+          problemNumber: result.problemNumber,
+          reason: error instanceof Error ? error.message : String(error),
+        });
+        problem = await buildChoClientProblem({ audit: result, position, corpus });
+      }
       if (problem) problems.push(problem);
       else exclusions.push({
         problemNumber: result.problemNumber,
@@ -147,6 +170,7 @@ async function main(
     failureTerminals: problems.reduce((sum, problem) => sum + problem.nodes.filter(
       node => node.terminal?.result === 'failure',
     ).length, 0),
+    refutationMergeWarnings,
     shardCount: shards.length,
   })}\n`);
 }
