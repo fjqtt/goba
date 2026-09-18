@@ -100,7 +100,7 @@ All repository Markdown documentation was rewritten in English. Architecture, ga
 
 - One-tap stone placement, 420 ms opponent delay, minimal side-to-play UI.
 - Deterministic ProblemV1 interpreter with legality first, explicit replies, state-hash replay, and checkpoint restore.
-- A missing/unclassified branch is neutral and never recorded as wrong.
+- Off-tree product rule (owner decision, 2026-09-18): a legal move outside the verified tree is graded as an immediate mistake — the stone is placed, the attempt ends as `failure`, and the problem enters mistake rotation. There is no prepared refutation for such moves. This supersedes the earlier neutral-unknown behavior; the risk of grading an unverified-but-correct alternative as wrong is accepted (2,711 alternative-correct candidates remain in the review queue). Illegal moves still only prompt, and pre-rule checkpoints with the retired neutral phase restore as `ready`.
 - Persisted shuffled collection run with one graded attempt when content reaches an explicit terminal; pack revision 3 makes wrong terminals reachable on 641 refuted problems.
 - The practice top bar shows a problem counter (for example 2/835) that opens statistics; the brand title and its round mark were removed from the practice screen after real-phone feedback that the mark rendered squashed.
 - Result handling supports correct/wrong, continuing to new problems, and rotating mistakes until corrected.
@@ -235,7 +235,7 @@ Visual QA was not completed: the in-app browser provider is unavailable in this 
 - Arbitrary future content explanations are shown verbatim unless added to the translation mapping.
 - Shudan pan/zoom and real mobile gesture QA remain incomplete.
 - No expert-verified, rights-cleared release catalog exists.
-- Refutation coverage is broad but still heuristic: 641/835 problems carry wrong branches (radius-2 plausibility, up to 12 per node); 51 book-move-rejected and quarantined/reconciled problems still allow unlimited neutral retries, and even covered problems keep unlisted moves neutral by design. Refutations are GNU Go candidate evidence ranked by KataGo policy, without independent terminal verification or expert review.
+- Refutation coverage is broad but still heuristic: 641/835 problems carry wrong branches (radius-2 plausibility, up to 12 per node). Under the off-tree rule every unlisted legal move is graded wrong without a demonstration, so an unverified-but-correct alternative move is misgraded until it is reviewed and added as a correct edge. Refutations are GNU Go candidate evidence ranked by KataGo policy, without independent terminal verification or expert review.
 - Local progress can still be evicted by the browser. Export and server sync are not implemented.
 - Node on the work machine is 23.6.0 while the project declares 22.12 or ≥24; builds pass with an engine warning.
 - `@sabaki/shudan@1.8.0` has an existing unmet peer declaration for Preact; Vite aliases it to React and builds pass.
@@ -246,7 +246,7 @@ Visual QA was not completed: the in-app browser provider is unavailable in this 
 2. Extend refutation expansion to the partial-line and root-only records once their lines/targets are reviewed; today only the 305 clean full-line problems are covered.
 3. Build the independent terminal verifier (Benson's unconditional life plus literal-capture checks on leaf boards) so success/failure terminals stop being derived from the goal type.
 4. Review the recorded review queues: 3 `book-move-rejected` problems (318, 417, 541), 528 alternative-correct candidates, 110 skipped wrong candidates, 254 KataGo disagreement states, and the 26 quarantined explicit-`PASS` problems.
-5. Decide the product policy for problems without refutation coverage (keep neutral retries, hide from graded mode, or show an ungraded badge).
+5. Review the 2,711 alternative-correct candidates: under the off-tree rule each unadded correct alternative is a false wrong, so this queue is now grading-critical.
 6. Continue real-iPhone checks for language persistence, direct routes, restore, offline reopen, reset, header fit, tap targets, and VoiceOver; also verify the new failure flow (refutation reply, failure message, mistake rotation) on a real phone.
 7. Deduplicate the GNU Go process/coordinate helpers: `generator/src/solver/gnugo-gtp.ts` is the canonical module for the refutation CLI, but `gnugo-adapter.ts` and `audit-gnugo-book.ts` still carry near-identical private copies (including the unguarded `child.stdin.end` EPIPE pattern fixed only in the shared module).
 

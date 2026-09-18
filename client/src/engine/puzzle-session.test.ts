@@ -58,12 +58,16 @@ describe('PuzzleSession', () => {
     expect(result.path.map(step => step.by)).toEqual(['student', 'opponent', 'student', 'opponent']);
   });
 
-  it('leaves an unclassified legal move ungraded and unplayed', async () => {
+  it('grades an unclassified legal move as an immediate mistake', async () => {
     const session = await startSession(await createSampleProblem());
     const result = await playStudentMove(session, 347);
-    expect(result.phase).toBe('unknown');
-    expect(result.nodeId).toBe(session.nodeId);
-    expect(result.rulesState.board.signMap).toEqual(session.rulesState.board.signMap);
+    expect(result.phase).toBe('failure');
+    expect(result.path).toEqual([{ node: session.nodeId, move: 347, by: 'student', verdict: 'wrong' }]);
+    expect(result.rulesState.board.signMap).not.toEqual(session.rulesState.board.signMap);
+    // The failed attempt restores from its checkpoint even though the move is off-tree.
+    const restored = await restoreSession(result.problem, createCheckpoint(result));
+    expect(restored.phase).toBe('failure');
+    expect(restored.path).toEqual(result.path);
   });
 
   it('checks legality before classifying a missing edge', async () => {

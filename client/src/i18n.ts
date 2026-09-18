@@ -142,9 +142,14 @@ const sessionMessages: Record<string, { ru: string; en: string }> = {
     en: 'This move repeats an earlier position.',
   },
   'Этот ход недопустим.': { ru: 'Этот ход недопустим.', en: 'This move is illegal.' },
+  // Retained for checkpoints saved before the off-tree-mistake product rule.
   'Этот ход ещё не проверен. Попробуйте другой.': {
     ru: 'Этот ход ещё не проверен. Попробуйте другой.',
     en: 'This move has not been verified. Try another one.',
+  },
+  'Этот ход — ошибка.': {
+    ru: 'Этот ход — ошибка.',
+    en: 'This move is a mistake.',
   },
   'Соперник может опровергнуть этот ход.': {
     ru: 'Соперник может опровергнуть этот ход.',

@@ -18,7 +18,7 @@ Client traverses a catalog independently of how it was obtained. Every problem n
 
 **65** problems are excluded: 26 quarantined explicit-PASS records, 21 without a selected target group, 10 with an illegal printable line, and 8 with a real version/setup difference. The full list is in `client/public/packs/cho-elementary/3/exclusions.json`.
 
-The pack remains `LicenseRef-Restricted-Research` and must not be described as an authorized public catalog. Solution lines come from a community printable key. Missing branches remain `unclassified` and never become `wrong` automatically.
+The pack remains `LicenseRef-Restricted-Research` and must not be described as an authorized public catalog. Solution lines come from a community printable key. Missing branches remain `unclassified` in the data; since 2026-09-18 the Client grades any legal off-tree move as an immediate mistake by product decision, so unreviewed correct alternatives are misgraded until they are added as explicit correct edges.
 
 Wrong branches come from the refutation-expansion pipeline (`generator/src/cli/expand-cho-refutations.ts`): plausible mistakes near the target group and solution line are screened with `owl_does_defend`/`owl_does_attack`, refuted with `owl_attack`/`owl_defend` after the forced wrong move, and admitted only when the follow-up verification query confirms no recovery. KataGo policy at the audited state ranks plausibility. This is candidate-grade heuristic evidence, not proof; the 2026-09-18 audit gates for independent terminal verification and expert review remain open. See [CHO_PACK_PRODUCT_AUDIT.md](CHO_PACK_PRODUCT_AUDIT.md).
 

@@ -31,7 +31,7 @@ Requirements source: [PLAN.md](PLAN.md), roadmap §13. `[x]` means the stated wo
 ## Stage 3 — progress
 
 - [x] C3.1 ts-fsrs with pinned parameters, append-only events, and one rating per attempt.
-- [ ] C3.2 Daily queue: due → limited new; hinted/wrong/solution = Again. Partial: a persisted collection run shuffles once, and the Client can record correct/wrong, repeat mistakes, and reset local state. Pack revision 2 makes the wrong path reachable on the 299 refuted problems; unlisted moves on the remaining problems still allow neutral retries. A separate `/statistics` page shows correct/wrong/unseen/accuracy. The SRS daily policy is not connected yet.
+- [ ] C3.2 Daily queue: due → limited new; hinted/wrong/solution = Again. Partial: a persisted collection run shuffles once, and the Client can record correct/wrong, repeat mistakes, and reset local state. Pack revision 3 provides refutations on 641 problems, and the off-tree rule grades every other legal unlisted move as an immediate mistake, so one-attempt behavior now holds everywhere. A separate `/statistics` page shows correct/wrong/unseen/accuracy. The SRS daily policy is not connected yet.
 - [ ] C3.3 Export and reproducible replay projection.
 - [ ] C3.4 First authorized and verified catalog of 100–300 problems. **Partial:** a local restricted Cho candidate catalog contains 835 problems (revision 2, 299 with prepared refutations, 26 explicit-`PASS` records quarantined); it is neither an authorized public catalog nor expert verified. Human content review and independent terminal verification remain open.
 
@@ -50,6 +50,7 @@ Requirements source: [PLAN.md](PLAN.md), roadmap §13. `[x]` means the stated wo
 
 ## Work log
 
+- 2026-09-18 (off-tree rule): by owner decision, a legal move outside the verified tree is now graded as an immediate mistake instead of the neutral "not verified" reply: the stone is placed, the attempt ends as `failure` without a refutation demonstration, the wrong result and `Again` rating are recorded, and the problem rotates into mistakes. The retired neutral phase was removed from the engine; old checkpoints carrying it restore as `ready`, and a failed off-tree checkpoint restores its final off-graph move. The alternative-correct review queue (2,711 candidates) is now grading-critical because unadded correct alternatives are misgraded. Tests updated; 23 files / 70 tests pass.
 - 2026-09-18 (later): switched the default interface language to English, replaced the practice-screen brand header (its round mark rendered squashed on a real phone) with a problem counter such as 2/835 that opens statistics, and installed pack revision 3: refutation coverage expanded to 641/835 problems and 14,941 wrong branches (plausibility radius 2, up to 12 per student node, all shipped audit statuses eligible; 51 book-move-rejected problems ship without branches pending review). Static HTML, PWA manifest, and document metadata default to English. TypeScript, 23 files / 70 tests, and the `/goba/` build (11,372 KiB precache) pass.
 
 - 2026-09-15: implemented the workspace, contract/rules, session and refutation navigation, Shudan prototype, staged packs, offline shell, and basic FSRS event flow; see `../HANDOFF.md`.

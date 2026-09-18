@@ -51,9 +51,9 @@ describe('generated Cho client pack', () => {
     const wrongEdge = root.edges.find(edge => edge.verdict === 'wrong')!;
     expect(wrongEdge.role).toBe('refutation');
 
-    // An unlisted legal move stays neutral and does not consume the attempt.
+    // An unlisted legal move is graded as an immediate mistake (off-tree rule).
     // Legality is checked explicitly: the first empty point may be suicide.
-    let session = await startSession(problem);
+    const probe = await startSession(problem);
     const listed = new Set(root.edges.map(edge => edge.move));
     const occupied = new Set([...problem.setup.black, ...problem.setup.white]);
     const rootState = createRulesState(problem);
@@ -63,10 +63,12 @@ describe('generated Cho client pack', () => {
         && !occupied.has(point)
         && applyMove(rootState, problem.toPlay, point, problem.boardSize).ok
       ))!;
-    session = await playStudentMove(session, unlisted);
-    expect(session.phase).toBe('unknown');
+    const offTree = await playStudentMove(probe, unlisted);
+    expect(offTree.phase).toBe('failure');
+    expect(offTree.path).toEqual([{ node: problem.root, move: unlisted, by: 'student', verdict: 'wrong' }]);
 
     // The prepared wrong move is refuted by the opponent and reaches a failure terminal.
+    let session = await startSession(problem);
     session = await playStudentMove(session, wrongEdge.move);
     expect(session.phase).toBe('failure');
     expect(session.path.map(step => step.by)).toEqual(['student', 'opponent']);

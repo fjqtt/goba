@@ -333,7 +333,7 @@ export function App() {
             onMove={play}
           />
 
-          {['success', 'failure', 'unknown', 'illegal', 'content-error'].includes(session.phase) && (
+          {['success', 'failure', 'illegal', 'content-error'].includes(session.phase) && (
             <section className={`feedback feedback-${session.phase}`} aria-live="polite">
               <span className="feedback-symbol" aria-hidden="true">{phaseSymbol(session.phase)}</span>
               <p>
@@ -405,7 +405,6 @@ export function App() {
 function phaseSymbol(phase: PuzzleSession['phase']): string {
   if (phase === 'success') return '✓';
   if (phase === 'failure' || phase === 'illegal' || phase === 'content-error') return '!';
-  if (phase === 'unknown') return '?';
   return '•';
 }
 
