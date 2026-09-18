@@ -35,6 +35,8 @@ export function StatsPage({
         <p className="stats-summary">{translate(language, 'completed', { solved, total: stats.total })}</p>
       </header>
 
+      <p className="stats-book-description">{translate(language, 'bookDescription')}</p>
+
       <div className="stats-progress" aria-label={translate(language, 'completedPercent', { percent: solvedPercent })}>
         <i style={{ width: `${solvedPercent}%` }} />
       </div>

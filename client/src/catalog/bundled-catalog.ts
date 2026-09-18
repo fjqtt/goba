@@ -1,22 +1,23 @@
 import type { ProblemV1 } from '@goba/problem-contract';
+import { BOOK } from '../book';
 import { db } from '../storage/database';
 import { installPack } from '../storage/pack-installer';
 
-export const CHO_COLLECTION_ID = 'cho-chikun-elementary-local-candidates-v1';
-export const CHO_PACK_ID = 'cho-chikun-elementary-local-candidates';
-export const CHO_PACK_REVISION = 2;
-export const CHO_PROBLEM_COUNT = 835;
+export const CHO_COLLECTION_ID = BOOK.collectionId;
+export const CHO_PACK_ID = BOOK.packId;
+export const CHO_PACK_REVISION = BOOK.packRevision;
+export const CHO_PROBLEM_COUNT = BOOK.problemCount;
 const CLIENT_VERSION = '0.1.0';
-const MANIFEST_PATH = `${import.meta.env.BASE_URL}packs/cho-elementary/2/manifest.json`;
+const MANIFEST_PATH = `${import.meta.env.BASE_URL}${BOOK.packManifestPath}`;
 
 let loading: Promise<ProblemV1[]> | undefined;
 
 export function loadBundledChoCatalog(): Promise<ProblemV1[]> {
   loading ??= loadPackCatalog({
-    packId: CHO_PACK_ID,
-    revision: CHO_PACK_REVISION,
+    packId: BOOK.packId,
+    revision: BOOK.packRevision,
     manifestUrl: new URL(MANIFEST_PATH, window.location.origin).toString(),
-    expectedProblemCount: CHO_PROBLEM_COUNT,
+    expectedProblemCount: BOOK.problemCount,
   }).catch(error => {
     loading = undefined;
     throw error;
