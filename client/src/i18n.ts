@@ -173,6 +173,7 @@ const sessionMessages: Record<string, { ru: string; en: string }> = {
   },
   'Решено.': { ru: 'Решено.', en: 'Solved.' },
   'Группа не живёт.': { ru: 'Группа не живёт.', en: 'The group does not live.' },
+  'Группа соперника выжила.': { ru: 'Группа соперника выжила.', en: 'The opponent group survived.' },
 };
 
 export function translateSessionMessage(message: string, language: Language): string {

@@ -2,25 +2,35 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
 import { hashBytes, type PackManifestV1, type ProblemV1 } from '@goba/problem-contract';
 import { buildChoClientProblem, type ChoAuditResult } from '../catalog/cho-client-pack';
+import type { WrongBranch } from '../catalog/refutation-expansion';
 import { importSgfCollection } from '../sgf/importer';
 
 const [
   collectionFile, auditFile, correctedCollectionFile, correctedAuditFile, reconciliationFile, outputDirectoryArg,
+  refutationsFile,
 ] = process.argv.slice(2);
 if (!collectionFile || !auditFile || !correctedCollectionFile || !correctedAuditFile || !reconciliationFile || !outputDirectoryArg) {
   process.stderr.write(
     'Usage: npm run build:cho-client-pack --workspace @goba/generator -- '
       + '<cho.sgf> <audit.json> <corrected.sgf> <corrected-audit.json> '
-      + '<reconciliation.json> <output-directory>\n',
+      + '<reconciliation.json> <output-directory> [refutations-report.json]\n',
   );
   process.exitCode = 2;
 } else {
   await main(
     collectionFile, auditFile, correctedCollectionFile, correctedAuditFile, reconciliationFile, outputDirectoryArg,
+    refutationsFile,
   );
 }
 
 type AuditReport = { results: ChoAuditResult[] };
+type RefutationsReport = {
+  results: Array<{
+    problemNumber: number;
+    status: string;
+    wrongBranches: WrongBranch[];
+  }>;
+};
 
 async function main(
   collectionName: string,
@@ -29,14 +39,21 @@ async function main(
   correctedAuditName: string,
   reconciliationName: string,
   outputDirectoryName: string,
+  refutationsName?: string,
 ): Promise<void> {
-  const [collection, audit, correctedCollection, correctedAudit, reconciliation] = await Promise.all([
+  const [collection, audit, correctedCollection, correctedAudit, reconciliation, refutationsReport] = await Promise.all([
     loadCollection(collectionName),
     loadJson<AuditReport>(auditName),
     loadCollection(correctedCollectionName),
     loadJson<AuditReport>(correctedAuditName),
     loadJson<{ unresolved: Array<{ problemNumber: number; category: string }> }>(reconciliationName),
+    refutationsName ? loadJson<RefutationsReport>(refutationsName) : Promise.resolve(undefined),
   ]);
+  const refutationsByProblem = new Map(
+    (refutationsReport?.results ?? [])
+      .filter(result => result.status === 'expanded' && result.wrongBranches.length > 0)
+      .map(result => [result.problemNumber, result.wrongBranches]),
+  );
   const exactPositions = new Map(collection.drafts.map((draft, index) => [index + 1, draft.position]));
   const correctedPositions = new Map(correctedCollection.drafts.map(draft => {
     const problemNumber = Number.parseInt(draft.sourceLabel.match(/\d+/)?.[0] ?? '', 10);
@@ -52,7 +69,16 @@ async function main(
     for (const result of report.results) {
       const position = positions.get(result.problemNumber);
       if (!position) throw new Error(`Missing ${corpus} position ${result.problemNumber}`);
-      const problem = await buildChoClientProblem({ audit: result, position, corpus });
+      const selected = result.candidates.find(candidate => candidate.anchor === result.selectedTarget);
+      // GNU Go proposing PASS means the position may already be settled; quarantine until human review.
+      if (selected?.primaryMove === 'PASS') {
+        exclusions.push({ problemNumber: result.problemNumber, corpus, reason: 'quarantined-explicit-pass' });
+        continue;
+      }
+      const refutations = corpus === 'exact' ? refutationsByProblem.get(result.problemNumber) : undefined;
+      const problem = await buildChoClientProblem({
+        audit: result, position, corpus, ...(refutations ? { refutations } : {}),
+      });
       if (problem) problems.push(problem);
       else exclusions.push({
         problemNumber: result.problemNumber,
@@ -90,12 +116,12 @@ async function main(
   }
   const manifest: PackManifestV1 = {
     packId: 'cho-chikun-elementary-local-candidates',
-    revision: 1,
+    revision: 2,
     schemaVersion: 1,
     minClientVersion: '0.1.0',
     shards,
     attribution: 'Restricted local research pack. Cho Chikun elementary positions and community printable lines.',
-    publishedAt: '2026-09-17T09:00:00+01:00',
+    publishedAt: '2026-09-18T18:00:00+01:00',
     revoked: [],
   };
   const manifestPath = resolve(outputDirectory, 'manifest.json');
@@ -111,6 +137,16 @@ async function main(
     exactCount: problems.filter(problem => problem.tags.includes('exact')).length,
     reconciledCount: problems.filter(problem => problem.tags.includes('reconciled')).length,
     excludedCount: exclusions.length,
+    quarantinedCount: exclusions.filter(item => item.reason === 'quarantined-explicit-pass').length,
+    withRefutations: problems.filter(problem => problem.tags.includes('has-refutations')).length,
+    studentWrongEdges: problems.reduce((sum, problem) => sum + problem.nodes.reduce(
+      (inner, node) => inner + node.edges.filter(
+        edge => edge.verdict === 'wrong' && edge.role === 'refutation',
+      ).length, 0,
+    ), 0),
+    failureTerminals: problems.reduce((sum, problem) => sum + problem.nodes.filter(
+      node => node.terminal?.result === 'failure',
+    ).length, 0),
     shardCount: shards.length,
   })}\n`);
 }

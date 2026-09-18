@@ -29,6 +29,62 @@ describe('Cho client pack normalizer', () => {
     expect(validateProblem(problem).ok).toBe(true);
   });
 
+  it('serializes wrong branches with refutation replies and failure terminals', async () => {
+    const input = {
+      corpus: 'exact' as const,
+      position: {
+        boardSize: 19 as const,
+        setup: { black: [19], white: [0] },
+        history: { policy: 'fresh-position' as const, moves: [] as [] },
+        toPlay: 'B' as const,
+      },
+      audit: {
+        problemNumber: 7,
+        status: 'full-line-match',
+        expectedRootMoves: [1],
+        sourceLine: [['B', 1], ['W', 2], ['B', 20]] as Array<['B' | 'W', number]>,
+        sourceLineReplay: { legal: true },
+        selectedTarget: 0,
+        candidates: [{ goalKind: 'capture' as const, targetColor: 'W' as const, anchor: 0 }],
+      },
+    };
+    const problem = await buildChoClientProblem({
+      ...input,
+      refutations: [
+        { ply: 0, move: 5, refutation: 6, evidence: { refuteCode: 1, refuteMove: 'F19', verifyCode: 0 } },
+        { ply: 2, move: 7, evidence: { refuteCode: 1, refuteMove: 'PASS', verifyCode: 0 } },
+      ],
+    });
+    expect(problem).toBeDefined();
+    expect(problem?.nodes).toHaveLength(7);
+    expect(problem?.verification.level).toBe('candidate');
+    expect(problem?.tags).toContain('has-refutations');
+
+    const rootWrong = problem?.nodes[0]?.edges.find(edge => edge.verdict === 'wrong');
+    expect(rootWrong).toMatchObject({ move: 5, role: 'refutation', next: 4 });
+    expect(problem?.nodes[4]).toMatchObject({
+      toPlay: 'W',
+      defaultReply: 0,
+      edges: [{ move: 6, next: 5, verdict: 'wrong', role: 'opponent' }],
+    });
+    expect(problem?.nodes[5]?.terminal).toMatchObject({ result: 'failure', outcome: 'unconditional-life' });
+
+    const deepWrong = problem?.nodes[2]?.edges.find(edge => edge.verdict === 'wrong');
+    expect(deepWrong).toMatchObject({ move: 7, next: 6 });
+    expect(problem?.nodes[6]?.terminal?.result).toBe('failure');
+    expect(problem?.nodes[6]?.toPlay).toBe('W');
+    expect(validateProblem(problem).ok).toBe(true);
+
+    await expect(buildChoClientProblem({
+      ...input,
+      refutations: [{ ply: 1, move: 5, evidence: { refuteCode: 1, refuteMove: 'F19', verifyCode: 0 } }],
+    })).rejects.toThrow('student node');
+    await expect(buildChoClientProblem({
+      ...input,
+      refutations: [{ ply: 0, move: 1, evidence: { refuteCode: 1, refuteMove: 'F19', verifyCode: 0 } }],
+    })).rejects.toThrow('duplicates');
+  });
+
   it('keeps every listed root alternative and rejects unsafe records', async () => {
     const base = {
       problemNumber: 9,

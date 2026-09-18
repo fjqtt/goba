@@ -1,0 +1,74 @@
+{
+  "packId": "cho-chikun-elementary-local-candidates",
+  "revision": 2,
+  "schemaVersion": 1,
+  "minClientVersion": "0.1.0",
+  "shards": [
+    {
+      "path": "problems-001.json",
+      "sha256": "sha256:39152e40b303fea8ce9d7496e1933ec94d48c47791a25448c9ba693a7cd8183b",
+      "bytes": 367132,
+      "expandedBytes": 367132,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-002.json",
+      "sha256": "sha256:fc2b52a0e28fdeff212bfb6fb90b441c631d01b47544f0e6c2dd68eb87771de1",
+      "bytes": 410154,
+      "expandedBytes": 410154,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-003.json",
+      "sha256": "sha256:23a28697db75061c56ed75ee9d1bfac6172db330fe41c64cfb84c5153b817e64",
+      "bytes": 329934,
+      "expandedBytes": 329934,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-004.json",
+      "sha256": "sha256:498ab10d1b5b7a62be48a2c21c8d4d7bcf4190613ee3835467d31f37994cff6c",
+      "bytes": 358006,
+      "expandedBytes": 358006,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-005.json",
+      "sha256": "sha256:c1860842ff5fb38865f3adfbe09af926c20a1925d8a2018e2dab2ad0178ea6a7",
+      "bytes": 349578,
+      "expandedBytes": 349578,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-006.json",
+      "sha256": "sha256:32de23c66ddcc7aa34e86c64812ce8cfa52980cc4e9658edad9f02c792a3fc8b",
+      "bytes": 331219,
+      "expandedBytes": 331219,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-007.json",
+      "sha256": "sha256:08ef01ee25460cddd86896bf59834b55820957bd0fef5ce6d263db6fc44416ef",
+      "bytes": 370840,
+      "expandedBytes": 370840,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-008.json",
+      "sha256": "sha256:382123b6c48aa03b4435c19cad8b96524ca66eb6baa270bd42dfe9da35e29ea8",
+      "bytes": 369665,
+      "expandedBytes": 369665,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-009.json",
+      "sha256": "sha256:5e341782c6648aec0e46527ab5efe8058d68a9e4d2d573def92ed2e9dfeb92f7",
+      "bytes": 131971,
+      "expandedBytes": 131971,
+      "problemCount": 35
+    }
+  ],
+  "attribution": "Restricted local research pack. Cho Chikun elementary positions and community printable lines.",
+  "publishedAt": "2026-09-18T18:00:00+01:00",
+  "revoked": []
+}

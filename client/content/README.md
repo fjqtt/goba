@@ -2,34 +2,43 @@
 
 Client traverses a catalog independently of how it was obtained. Every problem needs a `ProblemV1` with an initial position, correct line, opponent replies, and prepared refutations. A bare position or only the first correct coordinate is insufficient.
 
-## Local candidate pack — 2026-09-17
+## Local candidate pack revision 2 — 2026-09-18
 
-`client/public/packs/cho-elementary/1/` contains a local restricted pack:
+`client/public/packs/cho-elementary/2/` contains a local restricted pack:
 
-- **861/900** problems;
-- 840 exact-linked positions;
-- 21 reconstructed positions with a legal printable line and a selected target group;
-- 9 JSON shards, about 1.9 MiB total;
+- **835/900** problems (revision 2);
+- 823 exact-linked positions and 12 reconstructed positions with a legal printable line and a selected target group;
+- **299 problems carry prepared wrong branches**: 1,835 wrong student edges, each with a GNU Go refutation reply (or an immediate failure) and a failure terminal;
+- **26 problems are quarantined** (`quarantined-explicit-pass`, including problem 30) because GNU Go's primary result for the selected target was `PASS`; they need human review before re-publication;
+- every problem is labeled `verification.level: candidate` — heuristic GNU Go/KataGo evidence is never serialized as `solver-checked`;
+- 9 JSON shards, about 2.9 MiB total;
 - the manifest records SHA-256, byte size, and problem count for every shard;
 - Client verifies the manifest, hash, size, and ProblemV1 data before atomically activating the pack in IndexedDB;
 - the service worker precaches the pack JSON.
 
-**39** problems are excluded: 21 without a selected target group, 10 with an illegal printable line, and 8 with a real version/setup difference. The full list is in `client/public/packs/cho-elementary/1/exclusions.json`.
+**65** problems are excluded: 26 quarantined explicit-PASS records, 21 without a selected target group, 10 with an illegal printable line, and 8 with a real version/setup difference. The full list is in `client/public/packs/cho-elementary/2/exclusions.json`.
 
 The pack remains `LicenseRef-Restricted-Research` and must not be described as an authorized public catalog. Solution lines come from a community printable key. Missing branches remain `unclassified` and never become `wrong` automatically.
 
-**Product warning:** the current 861-problem pack has no explicit wrong edges, failure terminals, or prepared refutations. It cannot produce a wrong result and is not suitable for graded one-attempt practice. Problem 30 also exposed a publication-gate failure in which a heuristic candidate was labeled `solver-checked` without terminal proof. See [CHO_PACK_PRODUCT_AUDIT.md](CHO_PACK_PRODUCT_AUDIT.md) for the incident analysis, counts, and required gates. No remediation has been applied yet.
+Wrong branches come from the refutation-expansion pipeline (`generator/src/cli/expand-cho-refutations.ts`): plausible mistakes near the target group and solution line are screened with `owl_does_defend`/`owl_does_attack`, refuted with `owl_attack`/`owl_defend` after the forced wrong move, and admitted only when the follow-up verification query confirms no recovery. KataGo policy at the audited state ranks plausibility. This is candidate-grade heuristic evidence, not proof; the 2026-09-18 audit gates for independent terminal verification and expert review remain open. See [CHO_PACK_PRODUCT_AUDIT.md](CHO_PACK_PRODUCT_AUDIT.md).
 
-Reproduction command:
+Reproduction commands (research artifacts preserved in `~/Documents/goba-research-artifacts/`):
 
 ```bash
+npm run expand:cho-refutations --workspace @goba/generator -- \
+  ~/Documents/goba-research-artifacts/cho-1.sgf \
+  ~/Documents/goba-research-artifacts/goba-cho-gnugo-audit/audit-report.json \
+  ~/Documents/goba-research-artifacts/goba-cho-katago-crosscheck/results.jsonl \
+  ~/Documents/goba-research-artifacts/goba-cho-refutations
+
 npm run build:cho-client-pack --workspace @goba/generator -- \
-  /private/tmp/cho-1.sgf \
-  /private/tmp/goba-cho-gnugo-audit/audit-report.json \
-  /private/tmp/goba-cho-reconciliation/corrected-positions.sgf \
-  /private/tmp/goba-cho-reconciliation/gnugo-audit/audit-report.json \
-  /private/tmp/goba-cho-reconciliation/reconciliation-report.json \
-  client/public/packs/cho-elementary/1
+  ~/Documents/goba-research-artifacts/cho-1.sgf \
+  ~/Documents/goba-research-artifacts/goba-cho-gnugo-audit/audit-report.json \
+  ~/Documents/goba-research-artifacts/goba-cho-reconciliation/corrected-positions.sgf \
+  ~/Documents/goba-research-artifacts/goba-cho-reconciliation/gnugo-audit/audit-report.json \
+  ~/Documents/goba-research-artifacts/goba-cho-reconciliation/reconciliation-report.json \
+  "$(pwd)/client/public/packs/cho-elementary/2" \
+  ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json
 ```
 
 ## Cho Chikun sources found

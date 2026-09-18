@@ -16,6 +16,7 @@
     "run:katago-analysis": "tsx src/cli/run-katago-analysis.ts",
     "analyze:katago-crosscheck": "tsx src/cli/analyze-katago-crosscheck.ts",
     "build:cho-client-pack": "tsx src/cli/build-cho-client-pack.ts",
+    "expand:cho-refutations": "tsx src/cli/expand-cho-refutations.ts",
     "build": "tsc -p tsconfig.build.json"
   },
   "dependencies": {

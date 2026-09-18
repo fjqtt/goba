@@ -78,7 +78,7 @@ export const ProblemV1Schema = z.object({
   nodes: z.array(NodeV1Schema).min(1).max(10_000),
   root: z.number().int().nonnegative(),
   verification: z.object({
-    level: z.enum(['solver-checked', 'expert-reviewed']),
+    level: z.enum(['candidate', 'solver-checked', 'expert-reviewed']),
     auditId: z.string().min(1),
     adapterVersion: z.string().min(1),
     scope: z.literal('declared-position-and-rules'),

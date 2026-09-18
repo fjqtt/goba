@@ -1,7 +1,9 @@
 # Cho pack product audit
 
 Date: 2026-09-18  
-Status: confirmed content/publication incident; analysis only, no fix applied
+Status: confirmed content/publication incident; partial remediation shipped as pack revision 2 on 2026-09-18
+
+**Remediation update (2026-09-18, pack revision 2).** The refutation-expansion pipeline added prepared wrong branches to 299 of the 305 clean full-line problems (1,835 wrong edges with refutation replies and failure terminals), the 26 explicit-`PASS` records including problem 30 were quarantined out of the pack, and every `verification.level` was downgraded from `solver-checked` to the new honest `candidate` value. Gates still open: measured coverage policy (gate 2 is partial — plausible-mistake coverage is heuristic), independent terminal verification (gate 3), root validation beyond `PASS` quarantine (gate 4), a blocking review queue (gate 5), human content review (gate 7). Gate 8's end-to-end acceptance now exists as an automated test in `client/src/catalog/cho-pack.test.ts`. The analysis below describes the pack as shipped in revision 1 and remains the reference for the remaining gates.
 
 ## Executive finding
 

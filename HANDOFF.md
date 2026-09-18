@@ -35,7 +35,16 @@ The first real practice test exposed that the current Cho pack does not implemen
 - Screenshot problem `cho-elementary-0030` is also a likely invalid or already-settled exercise. GNU Go's selected candidate proposed `PASS`, exported an empty tree, and matched zero source plies. A17 was admitted only through a positive `owl_does_defend` query. KataGo ranked A17 22nd at the root.
 - The pack builder accepted this because its publication gate requires only a selected target, a legal printable line, and expected roots. It generates a success terminal from the goal type and hard-codes `solver-checked`; it does not verify the terminal or require refutations.
 
-The complete evidence, counts, scope, and required gates are in `client/content/CHO_PACK_PRODUCT_AUDIT.md`. Treat the current pack as an ungraded candidate-line viewer, not a reliable graded catalog. No code, generated content, or deployment was changed during this investigation.
+The complete evidence, counts, scope, and required gates are in `client/content/CHO_PACK_PRODUCT_AUDIT.md`.
+
+**Remediation shipped later the same day (pack revision 2, not yet committed or deployed):**
+
+- New `expand:cho-refutations` pipeline generated prepared wrong branches for the clean `full-line-match` subset: 302/305 problems expanded, 1,847 verified wrong branches, 528 alternative-correct candidates recorded for review, 110 candidates skipped by safety checks.
+- Pack revision 2 at `client/public/packs/cho-elementary/2/`: 835 problems, 299 with refutations (1,835 wrong edges and failure terminals). Revision 1 was removed.
+- The 26 explicit-`PASS` records, including problem 30, are quarantined (`quarantined-explicit-pass` in `exclusions.json`).
+- Every problem now carries the honest `verification.level: candidate` (new contract enum value) instead of `solver-checked`.
+- An end-to-end acceptance test covers: unknown probe stays neutral → prepared wrong move → refutation reply → failure terminal → `Again` rating → wrong collection result → mistake rotation.
+- Remaining open gates: independent terminal verification, coverage for partial/root-only records, blocking review queue, human content review.
 
 ## Earlier completed application work
 
@@ -88,8 +97,8 @@ All repository Markdown documentation was rewritten in English. Architecture, ga
 - One-tap stone placement, 420 ms opponent delay, minimal side-to-play UI.
 - Deterministic ProblemV1 interpreter with legality first, explicit replies, state-hash replay, and checkpoint restore.
 - A missing/unclassified branch is neutral and never recorded as wrong.
-- Persisted shuffled collection run with one graded attempt when content reaches an explicit terminal; the current Cho pack cannot reach a wrong terminal.
-- Result handling supports correct/wrong, continuing to new problems, and rotating mistakes until corrected; only the correct path is reachable in the current Cho pack.
+- Persisted shuffled collection run with one graded attempt when content reaches an explicit terminal; pack revision 2 makes wrong terminals reachable on 299 refuted problems.
+- Result handling supports correct/wrong, continuing to new problems, and rotating mistakes until corrected.
 - Separate `/statistics` page with total/correct/wrong/unseen/accuracy and confirmed reset.
 - Reset atomically clears collection results, active session, review events, FSRS cards, and outbox while preserving installed packs, device identity, and preferences.
 - Best-effort `navigator.storage.persist()`.
@@ -97,19 +106,21 @@ All repository Markdown documentation was rewritten in English. Architecture, ga
 
 ## Cho Client pack
 
-Location: `client/public/packs/cho-elementary/1/`.
+Location: `client/public/packs/cho-elementary/2/` (revision 2; revision 1 removed).
 
-- 861/900 problems included.
-- 840 exact-linked setups.
-- 21 reconciled setups with a legal printable line and selected GNU Go target.
-- 9 JSON shards, about 1.9 MiB.
+- 835/900 problems included.
+- 823 exact-linked setups and 12 reconciled setups with a legal printable line and selected GNU Go target.
+- 299 problems carry prepared wrong branches: 1,835 wrong edges with refutation replies (or immediate failure) and failure terminals.
+- Every problem is labeled `verification.level: candidate`.
+- 9 JSON shards, about 2.9 MiB.
 - Manifest records SHA-256, expanded size, and count.
 - Pack installer verifies manifest, size, hash, schema, and ProblemV1 before atomic activation.
-- Integration tests install all shards and replay every edge/state hash.
+- Integration tests install all shards, replay every edge/state hash, and run the wrong-move acceptance flow.
 - Service worker precaches the shards.
 
-Excluded: 39 problems in `exclusions.json`.
+Excluded: 65 problems in `exclusions.json`.
 
+- 26 quarantined explicit-`PASS` selected candidates (including problem 30).
 - 21 lack a selected target group.
 - 10 have illegal printable lines.
 - 8 have genuine setup-version differences.
@@ -125,17 +136,26 @@ Separate exclusion audit:
 
 Do not add any exclusion to the graded pack until setup, target, line, and terminal semantics are verified.
 
-Rebuild command:
+Rebuild commands (all research inputs are preserved in `~/Documents/goba-research-artifacts/`; the old `/private/tmp` copies are no longer required):
 
 ```bash
+npm run expand:cho-refutations --workspace @goba/generator -- \
+  ~/Documents/goba-research-artifacts/cho-1.sgf \
+  ~/Documents/goba-research-artifacts/goba-cho-gnugo-audit/audit-report.json \
+  ~/Documents/goba-research-artifacts/goba-cho-katago-crosscheck/results.jsonl \
+  ~/Documents/goba-research-artifacts/goba-cho-refutations
+
 npm run build:cho-client-pack --workspace @goba/generator -- \
-  /private/tmp/cho-1.sgf \
-  /private/tmp/goba-cho-gnugo-audit/audit-report.json \
-  /private/tmp/goba-cho-reconciliation/corrected-positions.sgf \
-  /private/tmp/goba-cho-reconciliation/gnugo-audit/audit-report.json \
-  /private/tmp/goba-cho-reconciliation/reconciliation-report.json \
-  client/public/packs/cho-elementary/1
+  ~/Documents/goba-research-artifacts/cho-1.sgf \
+  ~/Documents/goba-research-artifacts/goba-cho-gnugo-audit/audit-report.json \
+  ~/Documents/goba-research-artifacts/goba-cho-reconciliation/corrected-positions.sgf \
+  ~/Documents/goba-research-artifacts/goba-cho-reconciliation/gnugo-audit/audit-report.json \
+  ~/Documents/goba-research-artifacts/goba-cho-reconciliation/reconciliation-report.json \
+  "$(pwd)/client/public/packs/cho-elementary/2" \
+  ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json
 ```
+
+Note: `npm --workspace` resolves relative paths against `generator/`, so pass the output directory as an absolute path.
 
 ## Generator research state
 
@@ -149,6 +169,7 @@ npm run build:cho-client-pack --workspace @goba/generator -- \
 - KataGo Metal checked 2,642/2,642 states with 0 errors at 32 visits. It is a ranking signal, not proof.
 - RZS remains blocked on a reproducible Linux/amd64 CUDA worker. Apple Silicon Docker emulates amd64 but supplies no NVIDIA device.
 - Review queue: 254 KataGo disagreement/invalid states.
+- Refutation expansion (2026-09-18): 302/305 clean full-line problems expanded with 1,847 GNU Go-verified wrong branches ranked by KataGo policy; 3 `book-move-rejected` (problems 318, 417, 541) and 528 alternative-correct candidates await review. Report: `~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json`.
 - Generator queues/drafts remain in memory; no PostgreSQL leases, editor, terminal verifier, or publication pipeline exists.
 
 Key research documents:
@@ -161,7 +182,16 @@ Key research documents:
 
 ## Verification performed
 
-Current localization/settings block:
+Refutation/pack-revision-2 block (2026-09-18):
+
+- `npm run check` — passed.
+- `npm test -- --run` — passed: **23 files / 69 tests**, including the new refutation-expansion unit tests, the wrong-branch pack-builder test, the quarantine/candidate-label pack scan, and the end-to-end wrong-move acceptance flow on installed pack content.
+- Full `expand:cho-refutations` run: 305 eligible, 302 expanded, 0 errors, 38 s wall time.
+- Pack rebuild output: 835 problems, 299 with refutations, 1,835 wrong edges, 1,835 failure terminals, 26 quarantined, 9 shards.
+- `npm run build --workspace @goba/client` and the `/goba/` base-path build — passed; PWA precache 3,384 KiB with the revision-2 shards.
+- Direct pack scan confirmed: no `solver-checked` label remains, problems 0018/0030 absent, first/last IDs 0001/0900.
+
+Previous localization/settings block:
 
 - `npm run check` — passed.
 - `npm test -- --run` — passed: **21 files / 58 tests**.
@@ -198,19 +228,19 @@ Visual QA was not completed: the in-app browser provider is unavailable in this 
 - Arbitrary future content explanations are shown verbatim unless added to the translation mapping.
 - Shudan pan/zoom and real mobile gesture QA remain incomplete.
 - No expert-verified, rights-cleared release catalog exists.
-- The current Cho pack has no refutation branches at all. Every unlisted legal move stays `unclassified`, making a wrong result unreachable for this pack. This is a release-blocking mismatch with one-attempt practice, not a rare edge case.
+- Refutation coverage is partial and heuristic: 299/835 problems carry wrong branches (the clean full-line subset); the remaining 536 problems still allow unlimited neutral retries, and even covered problems keep unlisted moves neutral by design. Refutations are GNU Go candidate evidence ranked by KataGo policy, without independent terminal verification or expert review.
 - Local progress can still be evicted by the browser. Export and server sync are not implemented.
 - Node on the work machine is 23.6.0 while the project declares 22.12 or ≥24; builds pass with an engine warning.
 - `@sabaki/shudan@1.8.0` has an existing unmet peer declaration for Preact; Vite aliases it to React and builds pass.
 
 ## Next concrete steps
 
-1. Wait for product direction before applying a fix; this checkpoint was explicitly analysis-only.
-2. Decide whether to disable grading for the current candidate pack or quarantine it from practice while content is rebuilt.
-3. Add publication gates for wrong/refutation coverage, independent terminal verification, `PASS`/already-settled detection, solver-review blockers, and evidence-accurate verification labels.
-4. Quarantine and manually review problem 30 plus the other explicit-`PASS`, empty-tree, and root-only records before graded publication.
-5. Build at least one end-to-end acceptance case that reaches a prepared refutation, failure terminal, stored wrong result, and mistake rotation.
-6. Continue real-iPhone checks for language persistence, direct routes, restore, offline reopen, reset, header fit, tap targets, and VoiceOver.
+1. Commit and deploy pack revision 2 after owner approval (refutations, quarantine, honest labels, e2e test are ready locally).
+2. Extend refutation expansion to the partial-line and root-only records once their lines/targets are reviewed; today only the 305 clean full-line problems are covered.
+3. Build the independent terminal verifier (Benson's unconditional life plus literal-capture checks on leaf boards) so success/failure terminals stop being derived from the goal type.
+4. Review the recorded review queues: 3 `book-move-rejected` problems (318, 417, 541), 528 alternative-correct candidates, 110 skipped wrong candidates, 254 KataGo disagreement states, and the 26 quarantined explicit-`PASS` problems.
+5. Decide the product policy for problems without refutation coverage (keep neutral retries, hide from graded mode, or show an ungraded badge).
+6. Continue real-iPhone checks for language persistence, direct routes, restore, offline reopen, reset, header fit, tap targets, and VoiceOver; also verify the new failure flow (refutation reply, failure message, mistake rotation) on a real phone.
 
 ## Git rule
 
