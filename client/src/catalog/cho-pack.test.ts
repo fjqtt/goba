@@ -32,7 +32,9 @@ describe('generated Cho client pack', () => {
     expect(problems[0]?.problemId).toBe('cho-elementary-0001');
     expect(problems.at(-1)?.problemId).toBe('cho-elementary-0900');
     for (const problem of problems) await expectReplay(problem);
-  });
+    // Replaying ~15k wrong branches with per-node SHA-256 exceeds the default
+    // 5 s vitest timeout on slower CI runners.
+  }, 120_000);
 
   it('quarantines explicit-PASS problems and labels evidence as candidate', async () => {
     const problems = await loadCatalog();
@@ -42,7 +44,7 @@ describe('generated Cho client pack', () => {
     expect(problems.every(problem => problem.verification.level === 'candidate')).toBe(true);
     const withRefutations = problems.filter(problem => problem.tags.includes('has-refutations'));
     expect(withRefutations.length).toBeGreaterThanOrEqual(641);
-  });
+  }, 30_000);
 
   it('grades a wrong move end to end: refutation, failure, wrong result, mistake rotation', async () => {
     const problems = await loadCatalog();
@@ -86,7 +88,7 @@ describe('generated Cho client pack', () => {
     expect(collectionStats(run).wrong).toBe(1);
     run = await switchCollectionMode(run, 'mistakes');
     expect(currentProblemId(run)).toBe(problem.problemId);
-  });
+  }, 30_000);
 });
 
 async function loadCatalog(): Promise<ProblemV1[]> {
