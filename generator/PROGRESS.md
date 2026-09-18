@@ -47,3 +47,9 @@ Requirements source: [PLAN.md](PLAN.md), roadmap §16.
 - Pack builder merges wrong branches as `verdict: wrong` / `role: refutation` edges with opponent `defaultReply` refutations and failure terminals; it quarantines the 26 explicit-`PASS` selected candidates (including problem 30) with reason `quarantined-explicit-pass`; it labels every problem with the new honest `verification.level: candidate`.
 - Pack revision 2: 835 problems (823 exact, 12 reconciled), 299 with refutations, 1,835 wrong edges and failure terminals, 9 shards, 2.9 MiB, at `client/public/packs/cho-elementary/2/`. Revision 1 was removed.
 - Verification: `npm run check` passed; `npm test -- --run` passed with 23 files / 69 tests, including the new end-to-end acceptance test (unknown probe stays neutral; prepared wrong move → refutation → failure terminal → `Again` rating → wrong collection result → mistake rotation); both production builds passed with the new pack precached (3,384 KiB).
+
+## Coverage expansion v3 — 2026-09-18 Europe/Lisbon
+
+- Real-phone feedback: unverified-move messages were still frequent, so coverage was expanded. Pipeline version 3: plausibility radius 2 (was 1), up to 12 wrong branches per student node (was 4), eligibility extended from `full-line-match` to every status the pack ships (`partial-line-match`, `root-only-match`, `all-root-moves-covered`), with explicit-`PASS` candidates skipped to match the builder quarantine.
+- Full run: 705 eligible, 654 expanded, 51 `book-move-rejected` (review queue), 15,395 verified wrong branches (7,717 at the root), 2,711 alternative-correct candidates, 493 skipped by the refute/verify safety checks, 297 s wall time.
+- Pack revision 3: 835 problems, 641 with refutations, 14,941 wrong edges and failure terminals, about 10 MiB across 9 shards. Problem and manifest revisions bumped to 3; revision 2 removed.

@@ -32,7 +32,13 @@ const RUN_TIMEOUT_MS = 20_000;
 const PER_COMMAND_TIMEOUT_MS = 1_000;
 const MAX_RUN_TIMEOUT_MS = 120_000;
 /** Bump when screening/refutation semantics change; incompatible prior reports are discarded. */
-const PIPELINE_VERSION = 2;
+const PIPELINE_VERSION = 3;
+/** Chebyshev distance from the target group / solution line within which mistakes are plausible. */
+const PLAUSIBILITY_RADIUS = 2;
+/** Audit statuses whose problems ship in the pack and therefore need refutation coverage. */
+const ELIGIBLE_STATUSES = new Set([
+  'full-line-match', 'partial-line-match', 'root-only-match', 'all-root-moves-covered',
+]);
 
 const [collectionFile, auditFile, katagoResultsFile, artifactDirectoryArg] = process.argv.slice(2);
 if (!collectionFile || !auditFile || !katagoResultsFile || !artifactDirectoryArg) {
@@ -91,14 +97,17 @@ async function main(options: {
   const auditReportSha256 = await hashBytes(new Uint8Array(auditBytes));
 
   const rangeEnd = options.start + options.count;
-  const eligible = audit.results.filter(result => (
-    result.status === 'full-line-match'
-    && result.sourceLineReplay.legal
-    && result.selectedTarget !== undefined
-    && result.sourceLine.length > 0
-    && result.problemNumber >= options.start
-    && result.problemNumber < rangeEnd
-  ));
+  const eligible = audit.results.filter(result => {
+    const selected = result.candidates.find(candidate => candidate.anchor === result.selectedTarget);
+    return ELIGIBLE_STATUSES.has(result.status)
+      && result.sourceLineReplay.legal
+      && result.selectedTarget !== undefined
+      // Explicit-PASS candidates are quarantined by the pack builder; skip their expansion.
+      && selected?.primaryMove !== 'PASS'
+      && result.sourceLine.length > 0
+      && result.problemNumber >= options.start
+      && result.problemNumber < rangeEnd;
+  });
   const positions = new Map(collection.drafts.map((draft, index) => [index + 1, draft.position]));
   const prior = await readReport(reportPath);
   const priorCompatible = prior !== undefined
@@ -228,7 +237,7 @@ async function expandProblem(
       }
 
       const policy = policies.get(policyKey(audit.problemNumber, ply));
-      const ranked = rankByPolicy(nearPoints(rejected, plausibilityReferences, 1, size), policy);
+      const ranked = rankByPolicy(nearPoints(rejected, plausibilityReferences, PLAUSIBILITY_RADIUS, size), policy);
       let published = 0;
       for (const [rankIndex, move] of ranked.entries()) {
         if (published >= maxWrongPerNode) break;

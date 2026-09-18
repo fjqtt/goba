@@ -10,7 +10,6 @@ import {
 
 export type SessionPhase =
   | 'ready'
-  | 'unknown'
   | 'illegal'
   | 'wrong'
   | 'success'
@@ -85,23 +84,41 @@ export async function restoreSession(
   }
   let nodeId = problem.root;
   let rulesState = createRulesState(problem);
+  let offTreeMistake = false;
   for (const [index, step] of checkpoint.path.entries()) {
     if (step.node !== nodeId) throw new Error(`Checkpoint node mismatch at step ${index}`);
     const node = problem.nodes[nodeId]!;
     const edge = node.edges.find(candidate => candidate.move === step.move);
-    if (!edge) throw new Error(`Checkpoint edge missing at step ${index}`);
+    if (!edge) {
+      // A failure attempt may end with a graded off-tree mistake; only the final
+      // step may leave the verified tree, and the state hash cannot be checked.
+      const isFinalMistake = index === checkpoint.path.length - 1
+        && checkpoint.phase === 'failure'
+        && step.verdict === 'wrong';
+      if (!isFinalMistake) throw new Error(`Checkpoint edge missing at step ${index}`);
+      const applied = applyMove(rulesState, node.toPlay, step.move, problem.boardSize);
+      if (!applied.ok) throw new Error(`Checkpoint contains illegal move at step ${index}`);
+      rulesState = applied.state;
+      offTreeMistake = true;
+      break;
+    }
     const applied = applyMove(rulesState, node.toPlay, step.move, problem.boardSize);
     if (!applied.ok) throw new Error(`Checkpoint contains illegal move at step ${index}`);
     rulesState = applied.state;
     nodeId = edge.next;
   }
   if (nodeId !== checkpoint.nodeId) throw new Error('Checkpoint final node mismatch');
-  return verifyCurrentState({
+  const restore = offTreeMistake
+    ? async (session: PuzzleSession) => session
+    : verifyCurrentState;
+  return restore({
     attemptId: checkpoint.attemptId,
     problem,
     nodeId,
     rulesState,
-    phase: checkpoint.phase,
+    // Checkpoints saved before the off-tree-mistake rule may carry the retired
+    // neutral phase; the position itself is unchanged, so the attempt continues.
+    phase: (checkpoint.phase as string) === 'unknown' ? 'ready' : checkpoint.phase,
     message: checkpoint.message,
     path: checkpoint.path,
     hintCount: checkpoint.hintCount,
@@ -140,7 +157,7 @@ export async function playStudentMove(
   move: Move,
   options: PlayStudentMoveOptions = {},
 ): Promise<PuzzleSession> {
-  if (!['ready', 'unknown', 'illegal'].includes(session.phase)) return session;
+  if (!['ready', 'illegal'].includes(session.phase)) return session;
   const node = currentNode(session);
   if (node.toPlay !== session.problem.studentColor) {
     return contentError(session, 'Ожидался ход соперника, но ответ не задан.');
@@ -156,10 +173,16 @@ export async function playStudentMove(
   }
   const edge = node.edges.find(candidate => candidate.move === move);
   if (!edge || edge.verdict === 'unclassified') {
+    // Product rule (2026-09-18): a legal move outside the verified tree is graded
+    // as a mistake immediately. There is no prepared refutation to demonstrate,
+    // so the attempt ends at the played stone.
     return {
       ...session,
-      phase: 'unknown',
-      message: 'Этот ход ещё не проверен. Попробуйте другой.',
+      rulesState: applied.state,
+      phase: 'failure',
+      message: 'Этот ход — ошибка.',
+      path: [...session.path, { node: session.nodeId, move, by: 'student', verdict: 'wrong' }],
+      demoIndex: session.path.length + 1,
     };
   }
 
@@ -183,7 +206,7 @@ export async function playStudentMove(
 }
 
 export function revealHint(session: PuzzleSession): PuzzleSession {
-  if (!['ready', 'unknown', 'illegal'].includes(session.phase)) return session;
+  if (!['ready', 'illegal'].includes(session.phase)) return session;
   const solution = currentNode(session).edges.find(edge => edge.verdict === 'correct' && edge.role === 'solution');
   if (!solution) return contentError(session, 'Для этой позиции нет подготовленной подсказки.');
   return {
