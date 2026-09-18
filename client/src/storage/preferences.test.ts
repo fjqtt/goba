@@ -8,14 +8,14 @@ describe('interface preferences', () => {
     await db.settings.delete(LANGUAGE_SETTING_KEY);
   });
 
-  it('uses Russian by default and persists an explicit language', async () => {
-    await expect(loadLanguage()).resolves.toBe('ru');
-    await saveLanguage('en');
+  it('uses English by default and persists an explicit language', async () => {
     await expect(loadLanguage()).resolves.toBe('en');
+    await saveLanguage('ru');
+    await expect(loadLanguage()).resolves.toBe('ru');
   });
 
   it('ignores an invalid stored language', async () => {
     await db.settings.put({ key: LANGUAGE_SETTING_KEY, value: 'de' });
-    await expect(loadLanguage()).resolves.toBe('ru');
+    await expect(loadLanguage()).resolves.toBe('en');
   });
 });

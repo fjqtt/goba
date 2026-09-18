@@ -60,7 +60,7 @@ Implemented a small typed localization layer without a new dependency:
 - Practice, statistics, settings, engine feedback, update prompts, document title/description, and accessibility labels switch immediately.
 - Saved Russian engine/checkpoint messages are translated at render time, so changing language does not invalidate an unfinished attempt.
 - Unknown source explanations fall back to their original text.
-- Default language is Russian.
+- Default language is English (changed 2026-09-18 after the coverage-expansion feedback); Russian remains selectable and persisted.
 
 ### Settings page and persistence
 
@@ -101,7 +101,8 @@ All repository Markdown documentation was rewritten in English. Architecture, ga
 - One-tap stone placement, 420 ms opponent delay, minimal side-to-play UI.
 - Deterministic ProblemV1 interpreter with legality first, explicit replies, state-hash replay, and checkpoint restore.
 - A missing/unclassified branch is neutral and never recorded as wrong.
-- Persisted shuffled collection run with one graded attempt when content reaches an explicit terminal; pack revision 2 makes wrong terminals reachable on 299 refuted problems.
+- Persisted shuffled collection run with one graded attempt when content reaches an explicit terminal; pack revision 3 makes wrong terminals reachable on 641 refuted problems.
+- The practice top bar shows a problem counter (for example 2/835) that opens statistics; the brand title and its round mark were removed from the practice screen after real-phone feedback that the mark rendered squashed.
 - Result handling supports correct/wrong, continuing to new problems, and rotating mistakes until corrected.
 - Separate `/statistics` page with total/correct/wrong/unseen/accuracy and confirmed reset.
 - Reset atomically clears collection results, active session, review events, FSRS cards, and outbox while preserving installed packs, device identity, and preferences.
@@ -110,11 +111,11 @@ All repository Markdown documentation was rewritten in English. Architecture, ga
 
 ## Cho Client pack
 
-Location: `client/public/packs/cho-elementary/2/` (revision 2; revision 1 removed).
+Location: `client/public/packs/cho-elementary/3/` (revision 3; revisions 1 and 2 removed).
 
 - 835/900 problems included.
 - 823 exact-linked setups and 12 reconciled setups with a legal printable line and selected GNU Go target.
-- 299 problems carry prepared wrong branches: 1,835 wrong edges with refutation replies (or immediate failure) and failure terminals.
+- 641 problems carry prepared wrong branches: 14,941 wrong edges with refutation replies (or immediate failure) and failure terminals. Coverage expansion v3 (2026-09-18): plausibility radius 2, up to 12 branches per student node, and eligibility extended from full-line-match to all shipped statuses; 51 problems where GNU Go rejected the printable move at some node ship without branches and await review; the pack is about 10 MiB.
 - Every problem is labeled `verification.level: candidate`.
 - 9 JSON shards, about 2.9 MiB.
 - Manifest records SHA-256, expanded size, and count.
@@ -155,7 +156,7 @@ npm run build:cho-client-pack --workspace @goba/generator -- \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/corrected-positions.sgf \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/gnugo-audit/audit-report.json \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/reconciliation-report.json \
-  "$(pwd)/client/public/packs/cho-elementary/2" \
+  "$(pwd)/client/public/packs/cho-elementary/3" \
   ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json
 ```
 
@@ -234,7 +235,7 @@ Visual QA was not completed: the in-app browser provider is unavailable in this 
 - Arbitrary future content explanations are shown verbatim unless added to the translation mapping.
 - Shudan pan/zoom and real mobile gesture QA remain incomplete.
 - No expert-verified, rights-cleared release catalog exists.
-- Refutation coverage is partial and heuristic: 299/835 problems carry wrong branches (the clean full-line subset); the remaining 536 problems still allow unlimited neutral retries, and even covered problems keep unlisted moves neutral by design. Refutations are GNU Go candidate evidence ranked by KataGo policy, without independent terminal verification or expert review.
+- Refutation coverage is broad but still heuristic: 641/835 problems carry wrong branches (radius-2 plausibility, up to 12 per node); 51 book-move-rejected and quarantined/reconciled problems still allow unlimited neutral retries, and even covered problems keep unlisted moves neutral by design. Refutations are GNU Go candidate evidence ranked by KataGo policy, without independent terminal verification or expert review.
 - Local progress can still be evicted by the browser. Export and server sync are not implemented.
 - Node on the work machine is 23.6.0 while the project declares 22.12 or ≥24; builds pass with an engine warning.
 - `@sabaki/shudan@1.8.0` has an existing unmet peer declaration for Preact; Vite aliases it to React and builds pass.

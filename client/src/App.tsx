@@ -255,28 +255,29 @@ export function App() {
   return (
     <main className="app-shell">
       <header className="topbar">
-        <a className="brand" href={PRACTICE_PATH} aria-label={translate(language, 'brandAria')} onClick={event => {
-          event.preventDefault();
-          navigateTo('practice');
-        }}>
-          <span className="brand-mark" aria-hidden="true">●</span>
-          <span>{translate(language, 'brand')}</span>
-        </a>
+        {page === 'practice' ? (
+          <a
+            className={`problem-counter${run ? '' : ' topbar-link-disabled'}`}
+            href={run ? STATISTICS_PATH : PRACTICE_PATH}
+            aria-label={translate(language, 'openStatistics', { position: passPosition, total: passTotal })}
+            aria-disabled={!run}
+            onClick={event => {
+              event.preventDefault();
+              if (run) navigateTo('statistics');
+            }}
+          >
+            {run ? `${passPosition}/${passTotal}` : '…'}
+          </a>
+        ) : (
+          <a className="brand" href={PRACTICE_PATH} aria-label={translate(language, 'brandAria')} onClick={event => {
+            event.preventDefault();
+            navigateTo('practice');
+          }}>
+            <span>{translate(language, 'brand')}</span>
+          </a>
+        )}
         <nav className="topbar-nav" aria-label={translate(language, 'mainNavigation')}>
-          {page === 'practice' ? (
-            <a
-              className={`topbar-link${run ? '' : ' topbar-link-disabled'}`}
-              href={run ? STATISTICS_PATH : PRACTICE_PATH}
-              aria-label={translate(language, 'openStatistics', { position: passPosition, total: passTotal })}
-              aria-disabled={!run}
-              onClick={event => {
-                event.preventDefault();
-                if (run) navigateTo('statistics');
-              }}
-            >
-              {translate(language, 'statistics')}
-            </a>
-          ) : (
+          {page !== 'practice' && (
             <a className="topbar-link" href={PRACTICE_PATH} onClick={event => {
               event.preventDefault();
               navigateTo('practice');

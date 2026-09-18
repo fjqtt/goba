@@ -50,6 +50,8 @@ Requirements source: [PLAN.md](PLAN.md), roadmap §13. `[x]` means the stated wo
 
 ## Work log
 
+- 2026-09-18 (later): switched the default interface language to English, replaced the practice-screen brand header (its round mark rendered squashed on a real phone) with a problem counter such as 2/835 that opens statistics, and installed pack revision 3: refutation coverage expanded to 641/835 problems and 14,941 wrong branches (plausibility radius 2, up to 12 per student node, all shipped audit statuses eligible; 51 book-move-rejected problems ship without branches pending review). Static HTML, PWA manifest, and document metadata default to English. TypeScript, 23 files / 70 tests, and the `/goba/` build (11,372 KiB precache) pass.
+
 - 2026-09-15: implemented the workspace, contract/rules, session and refutation navigation, Shudan prototype, staged packs, offline shell, and basic FSRS event flow; see `../HANDOFF.md`.
 - 2026-09-15: reduced the interface to the current color and board; changed input to one tap.
 - 2026-09-15: removed synthetic demos after feedback. Added real Tsumego Hero problem 408 from `Life & Death — Elementary #3` (claimed 7k) with its full SGF correct line, three false first moves, and a false continuation. It remains a temporary local example with unclear rights, not release content.

@@ -56,17 +56,20 @@ button { font: inherit; }
   text-transform: uppercase;
 }
 
-.brand-mark {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  place-items: center;
-  border-radius: 50%;
-  color: #e7ad55;
-  background: #10211b;
-  font-size: 19px;
-  line-height: 1;
+.problem-counter {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  border-radius: 11px;
+  color: #36564b;
+  background: #e7e6df;
+  font-size: .95rem;
+  font-weight: 720;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
 }
+.problem-counter:focus-visible { outline: 2px solid #266d5a; outline-offset: 3px; }
 
 .topbar-link {
   min-height: 40px;
@@ -393,7 +396,6 @@ button { font: inherit; }
 @media (max-width: 380px) {
   .app-shell { padding-inline: 12px; }
   .brand { gap: 7px; font-size: .8rem; letter-spacing: .05em; }
-  .brand-mark { width: 30px; height: 30px; }
   .topbar-nav { gap: 5px; }
   .topbar-link { padding-inline: 10px; font-size: .83rem; }
   .practice-heading { padding-top: 22px; }

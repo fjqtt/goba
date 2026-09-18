@@ -1,3 +1,3 @@
 export type Language = 'ru' | 'en';
 
-export const DEFAULT_LANGUAGE: Language = 'ru';
+export const DEFAULT_LANGUAGE: Language = 'en';

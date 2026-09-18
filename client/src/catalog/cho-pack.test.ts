@@ -41,7 +41,7 @@ describe('generated Cho client pack', () => {
     expect(ids.has('cho-elementary-0018')).toBe(false);
     expect(problems.every(problem => problem.verification.level === 'candidate')).toBe(true);
     const withRefutations = problems.filter(problem => problem.tags.includes('has-refutations'));
-    expect(withRefutations.length).toBeGreaterThanOrEqual(299);
+    expect(withRefutations.length).toBeGreaterThanOrEqual(641);
   });
 
   it('grades a wrong move end to end: refutation, failure, wrong result, mistake rotation', async () => {

@@ -17,10 +17,10 @@ export default defineConfig(() => {
         registerType: 'prompt',
         devOptions: { enabled: false },
         manifest: {
-          name: BOOK.title.ru,
-          short_name: BOOK.shortTitle.ru,
-          description: BOOK.tagline.ru,
-          lang: 'ru',
+          name: BOOK.title.en,
+          short_name: BOOK.shortTitle.en,
+          description: BOOK.tagline.en,
+          lang: 'en',
           start_url: `${base}practice/today`,
           scope: base,
           display: 'standalone',
@@ -58,8 +58,8 @@ function bookHtml(): Plugin {
   return {
     name: 'book-html',
     transformIndexHtml: html => html
-      .replaceAll('%BOOK_TITLE%', BOOK.title.ru)
-      .replaceAll('%BOOK_DESCRIPTION%', `${BOOK.tagline.ru} ${BOOK.tagline.en}`),
+      .replaceAll('%BOOK_TITLE%', BOOK.title.en)
+      .replaceAll('%BOOK_DESCRIPTION%', `${BOOK.tagline.en} ${BOOK.tagline.ru}`),
   };
 }
 
