@@ -66,12 +66,13 @@ export async function installPack(
       await db.problems.bulkPut(records);
       await db.packs.put({ key: packKey, packId: manifest.packId, revision: manifest.revision, state: 'ready', manifest });
       await db.settings.put({ key: `active-pack:${manifest.packId}`, value: packKey });
-      // Remove superseded revisions of the same pack so quarantined problems do not
-      // linger on devices and storage does not double after an upgrade.
+      // Remove only older revisions of the same pack so quarantined problems do not
+      // linger on devices. Newer revisions (and their staged rows) must survive: a
+      // stale cached app version reinstalling its old revision may run this cleanup.
       const stale = await db.packs
         .where('[packId+revision]')
         .between([manifest.packId, -Infinity], [manifest.packId, Infinity])
-        .filter(pack => pack.key !== packKey)
+        .filter(pack => pack.revision < manifest.revision)
         .toArray();
       for (const pack of stale) {
         await db.problems.where('packKey').equals(pack.key).delete();

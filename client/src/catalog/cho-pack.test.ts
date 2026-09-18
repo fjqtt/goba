@@ -52,11 +52,17 @@ describe('generated Cho client pack', () => {
     expect(wrongEdge.role).toBe('refutation');
 
     // An unlisted legal move stays neutral and does not consume the attempt.
+    // Legality is checked explicitly: the first empty point may be suicide.
     let session = await startSession(problem);
     const listed = new Set(root.edges.map(edge => edge.move));
     const occupied = new Set([...problem.setup.black, ...problem.setup.white]);
+    const rootState = createRulesState(problem);
     const unlisted = Array.from({ length: problem.boardSize ** 2 }, (_, point) => point)
-      .find(point => !listed.has(point) && !occupied.has(point))!;
+      .find(point => (
+        !listed.has(point)
+        && !occupied.has(point)
+        && applyMove(rootState, problem.toPlay, point, problem.boardSize).ok
+      ))!;
     session = await playStudentMove(session, unlisted);
     expect(session.phase).toBe('unknown');
 

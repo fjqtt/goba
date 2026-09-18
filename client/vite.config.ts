@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
 import { defineConfig, type Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { BOOK } from './src/book';
 
 export default defineConfig(() => {
   const base = normalizedBasePath(process.env.VITE_BASE_PATH ?? '/');
@@ -10,14 +11,15 @@ export default defineConfig(() => {
     base,
     plugins: [
       react(),
+      bookHtml(),
       spaEntryPoints(['practice/today', 'statistics', 'settings']),
       VitePWA({
         registerType: 'prompt',
         devOptions: { enabled: false },
         manifest: {
-          name: 'Тихий ход — цумэго',
-          short_name: 'Тихий ход',
-          description: 'Короткие тренировки по цумэго, доступные без сети.',
+          name: BOOK.title.ru,
+          short_name: BOOK.shortTitle.ru,
+          description: BOOK.tagline.ru,
           lang: 'ru',
           start_url: `${base}practice/today`,
           scope: base,
@@ -25,15 +27,20 @@ export default defineConfig(() => {
           background_color: '#f2f0e9',
           theme_color: '#10211b',
           icons: [{
-            src: `${base}app-icon.svg`,
-            sizes: 'any',
-            type: 'image/svg+xml',
+            src: `${base}app-icon-192.png`,
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any maskable',
+          }, {
+            src: `${base}app-icon-512.png`,
+            sizes: '512x512',
+            type: 'image/png',
             purpose: 'any maskable',
           }],
         },
         workbox: {
           navigateFallback: `${base}index.html`,
-          globPatterns: ['**/*.{js,css,html,svg,woff2,json}'],
+          globPatterns: ['**/*.{js,css,html,svg,png,woff2,json}'],
         },
       }),
     ],
@@ -45,6 +52,16 @@ export default defineConfig(() => {
     },
   };
 });
+
+/** Injects the book title and tagline so index.html never drifts from BOOK. */
+function bookHtml(): Plugin {
+  return {
+    name: 'book-html',
+    transformIndexHtml: html => html
+      .replaceAll('%BOOK_TITLE%', BOOK.title.ru)
+      .replaceAll('%BOOK_DESCRIPTION%', `${BOOK.tagline.ru} ${BOOK.tagline.en}`),
+  };
+}
 
 function normalizedBasePath(value: string): string {
   return `/${value.replace(/^\/+|\/+$/g, '')}${value === '/' ? '' : '/'}`;

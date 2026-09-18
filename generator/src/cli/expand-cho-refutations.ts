@@ -230,11 +230,11 @@ async function expandProblem(
       const policy = policies.get(policyKey(audit.problemNumber, ply));
       const ranked = rankByPolicy(nearPoints(rejected, plausibilityReferences, 1, size), policy);
       let published = 0;
-      for (const move of ranked) {
+      for (const [rankIndex, move] of ranked.entries()) {
         if (published >= maxWrongPerNode) break;
         const branch = await refuteCandidate(binary, {
           position, prefix, move, target, refuteCommand, verifyCommand, ply, policy,
-          localPolicyRank: ranked.indexOf(move) + 1,
+          localPolicyRank: rankIndex + 1,
         });
         if ('reason' in branch) {
           node.skipped.push(branch);
@@ -290,9 +290,11 @@ async function refuteCandidate(binary: string, input: {
   // such moves must not be graded wrong unconditionally.
   if (refuteCode !== 1) return { move, reason: 'ko-conditional' };
 
-  const replyPoint = refuteMove && refuteMove.toUpperCase() !== 'PASS'
-    ? gtpVertexToPoint(refuteMove, position.boardSize)
-    : -1;
+  // Only an explicit PASS means "failed as it stands"; an unparseable vertex is an
+  // error, never an immediate-failure branch.
+  const isPass = refuteMove.toUpperCase() === 'PASS';
+  const replyPoint = !isPass && refuteMove ? gtpVertexToPoint(refuteMove, position.boardSize) : -1;
+  if (!isPass && replyPoint < 0) return { move, reason: 'refute-error' };
   const verifyPath: Array<[Color, number]> = replyPoint >= 0
     ? [...wrongPath, [opponent, replyPoint]]
     : wrongPath;

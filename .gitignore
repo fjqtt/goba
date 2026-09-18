@@ -9,3 +9,4 @@ coverage/
 test-results/
 .npm-cache/
 analysis_logs/
+.claude/settings.local.json

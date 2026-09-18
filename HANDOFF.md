@@ -46,6 +46,10 @@ The complete evidence, counts, scope, and required gates are in `client/content/
 - An end-to-end acceptance test covers: unknown probe stays neutral → prepared wrong move → refutation reply → failure terminal → `Again` rating → wrong collection result → mistake rotation.
 - Remaining open gates: independent terminal verification, coverage for partial/root-only records, blocking review queue, human content review.
 
+## One-book application model — 2026-09-18
+
+The client is now a single-book application named after its book. `client/src/book.ts` holds the book configuration (pack id/revision/count/manifest path, localized title, short title, tagline, description); the catalog loader, i18n brand strings, document title/description, PWA manifest, and the statistics-page book description all derive from it. Launching another book means copying the client with a different `BOOK` value and deploying under its own base path; IndexedDB storage is already keyed by pack and collection ids, so multiple book apps on one origin do not collide. App name: "Cho Chikun Elementary" (Russian title in `BOOK.title.ru`; previously "Quiet Move").
+
 ## Earlier completed application work
 
 ### Russian/English interface

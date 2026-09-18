@@ -235,6 +235,7 @@ button { font: inherit; }
   line-height: 1;
 }
 .stats-heading .stats-summary { margin: 12px 0 0; color: #66726c; }
+.stats-book-description { margin: 18px 0 0; color: #66726c; font-size: .86rem; line-height: 1.5; text-align: center; }
 .stats-progress { height: 6px; margin: 20px 0 28px; overflow: hidden; border-radius: 99px; background: #deddd6; }
 .stats-progress i { display: block; height: 100%; border-radius: inherit; background: #c3822e; transition: width 180ms ease-out; }
 .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0 0 28px; }

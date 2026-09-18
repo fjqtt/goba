@@ -1,11 +1,13 @@
-export type Language = 'ru' | 'en';
+import { BOOK } from './book';
 
-export const DEFAULT_LANGUAGE: Language = 'ru';
+export type { Language } from './i18n-types';
+export { DEFAULT_LANGUAGE } from './i18n-types';
+import type { Language } from './i18n-types';
 
 const translations = {
   ru: {
-    brand: 'Тихий ход',
-    brandAria: 'Тихий ход, сегодняшняя практика',
+    brand: BOOK.title.ru,
+    brandAria: `${BOOK.title.ru}, сегодняшняя практика`,
     back: 'Назад',
     statistics: 'Статистика',
     settings: 'Настройки',
@@ -26,7 +28,7 @@ const translations = {
     collectionCompleted: 'Сборник пройден',
     viewStatistics: 'Посмотреть статистику',
     loadingBoard: 'Готовим доску…',
-    collectionTitle: 'Чо Чикун · Начальный уровень',
+    collectionTitle: BOOK.title.ru,
     completed: 'Пройдено {{solved}} из {{total}}',
     completedPercent: 'Пройдено {{percent}}%',
     correct: 'Правильно',
@@ -52,12 +54,13 @@ const translations = {
     russian: 'Русский',
     english: 'English',
     languageSavedLocally: 'Выбор языка сохранён на этом устройстве.',
-    documentTitle: 'Тихий ход',
-    documentDescription: 'Короткие тренировки по цумэго, доступные без сети.',
+    documentTitle: BOOK.title.ru,
+    documentDescription: BOOK.tagline.ru,
+    bookDescription: BOOK.description.ru,
   },
   en: {
-    brand: 'Quiet Move',
-    brandAria: "Quiet Move, today's practice",
+    brand: BOOK.title.en,
+    brandAria: `${BOOK.title.en}, today's practice`,
     back: 'Back',
     statistics: 'Statistics',
     settings: 'Settings',
@@ -78,7 +81,7 @@ const translations = {
     collectionCompleted: 'Collection complete',
     viewStatistics: 'View statistics',
     loadingBoard: 'Preparing the board…',
-    collectionTitle: 'Cho Chikun · Elementary',
+    collectionTitle: BOOK.title.en,
     completed: 'Completed {{solved}} of {{total}}',
     completedPercent: '{{percent}}% completed',
     correct: 'Correct',
@@ -104,8 +107,9 @@ const translations = {
     russian: 'Русский',
     english: 'English',
     languageSavedLocally: 'Your language choice is saved on this device.',
-    documentTitle: 'Quiet Move',
-    documentDescription: 'Short tsumego practice sessions that work offline.',
+    documentTitle: BOOK.title.en,
+    documentDescription: BOOK.tagline.en,
+    bookDescription: BOOK.description.en,
   },
 } as const;
 
