@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
 import { hashBytes, type PackManifestV1, type ProblemV1 } from '@goba/problem-contract';
 import { buildChoClientProblem, type ChoAuditResult } from '../catalog/cho-client-pack';
-import type { WrongBranch } from '../catalog/refutation-expansion';
+import type { RefutationReport } from '../catalog/refutation-expansion';
 import { importSgfCollection } from '../sgf/importer';
 
 const [
@@ -24,14 +24,6 @@ if (!collectionFile || !auditFile || !correctedCollectionFile || !correctedAudit
 }
 
 type AuditReport = { results: ChoAuditResult[] };
-type RefutationsReport = {
-  auditReportSha256: string;
-  results: Array<{
-    problemNumber: number;
-    status: string;
-    wrongBranches: WrongBranch[];
-  }>;
-};
 
 async function main(
   collectionName: string,
@@ -48,7 +40,7 @@ async function main(
     loadCollection(correctedCollectionName),
     loadJson<AuditReport>(correctedAuditName),
     loadJson<{ unresolved: Array<{ problemNumber: number; category: string }> }>(reconciliationName),
-    refutationsName ? loadJson<RefutationsReport>(refutationsName) : Promise.resolve(undefined),
+    refutationsName ? loadJson<RefutationReport>(refutationsName) : Promise.resolve(undefined),
   ]);
   const audit = JSON.parse(auditBytes.toString('utf8')) as AuditReport;
   if (refutationsReport) {

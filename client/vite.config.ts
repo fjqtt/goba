@@ -11,6 +11,7 @@ export default defineConfig(() => {
     base,
     plugins: [
       react(),
+      bookHtml(),
       spaEntryPoints(['practice/today', 'statistics', 'settings']),
       VitePWA({
         registerType: 'prompt',
@@ -51,6 +52,16 @@ export default defineConfig(() => {
     },
   };
 });
+
+/** Injects the book title and tagline so index.html never drifts from BOOK. */
+function bookHtml(): Plugin {
+  return {
+    name: 'book-html',
+    transformIndexHtml: html => html
+      .replaceAll('%BOOK_TITLE%', BOOK.title.ru)
+      .replaceAll('%BOOK_DESCRIPTION%', `${BOOK.tagline.ru} ${BOOK.tagline.en}`),
+  };
+}
 
 function normalizedBasePath(value: string): string {
   return `/${value.replace(/^\/+|\/+$/g, '')}${value === '/' ? '' : '/'}`;
