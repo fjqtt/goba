@@ -4,10 +4,10 @@ import { installPack } from '../storage/pack-installer';
 
 export const CHO_COLLECTION_ID = 'cho-chikun-elementary-local-candidates-v1';
 export const CHO_PACK_ID = 'cho-chikun-elementary-local-candidates';
-export const CHO_PACK_REVISION = 1;
-export const CHO_PROBLEM_COUNT = 861;
+export const CHO_PACK_REVISION = 2;
+export const CHO_PROBLEM_COUNT = 835;
 const CLIENT_VERSION = '0.1.0';
-const MANIFEST_PATH = `${import.meta.env.BASE_URL}packs/cho-elementary/1/manifest.json`;
+const MANIFEST_PATH = `${import.meta.env.BASE_URL}packs/cho-elementary/2/manifest.json`;
 
 let loading: Promise<ProblemV1[]> | undefined;
 

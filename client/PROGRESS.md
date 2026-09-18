@@ -16,9 +16,9 @@ Requirements source: [PLAN.md](PLAN.md), roadmap §13. `[x]` means the stated wo
 
 - [x] C1.1 Deterministic interpreter: legality → edge → replay/hash → checkpoint.
 - [x] C1.2 Alternative correct moves, defaultReply, neutral unknown, and invalid content without SRS.
-- [ ] C1.3 Solution view, prepared refutation navigation, and retry that retains errors. Partial: false branches continue without early grading and refutation navigation works; full solution view and practice retry remain. The visible hint button was removed following product feedback.
+- [ ] C1.3 Solution view, prepared refutation navigation, and retry that retains errors. Partial: the interpreter supports false branches and refutation navigation, and pack revision 2 now ships 299 problems with 1,835 prepared wrong branches and failure terminals, covered by an end-to-end acceptance test. Full solution view and practice retry also remain. The visible hint button was removed following product feedback.
 - [x] C1.4 Restore an unfinished attempt against its pinned revision.
-- [x] C1.5 Gate: replay every included path; a missing edge is never wrong. Every edge in the local Cho pack is replayed after serialization/install; missing branches stay `unclassified`.
+- [x] C1.5 Gate: replay every included path; a missing edge is never wrong. Every edge in the local Cho pack is replayed after serialization/install; missing branches stay `unclassified`. This is a structural replay gate and does not verify terminal truth or refutation coverage.
 
 ## Stage 2 — offline
 
@@ -31,9 +31,9 @@ Requirements source: [PLAN.md](PLAN.md), roadmap §13. `[x]` means the stated wo
 ## Stage 3 — progress
 
 - [x] C3.1 ts-fsrs with pinned parameters, append-only events, and one rating per attempt.
-- [ ] C3.2 Daily queue: due → limited new; hinted/wrong/solution = Again. Partial: a persisted collection run shuffles once, allows one attempt, records correct/wrong, repeats mistakes, and supports complete local reset. A separate `/statistics` page shows correct/wrong/unseen/accuracy. The SRS daily policy is not connected yet.
+- [ ] C3.2 Daily queue: due → limited new; hinted/wrong/solution = Again. Partial: a persisted collection run shuffles once, and the Client can record correct/wrong, repeat mistakes, and reset local state. Pack revision 2 makes the wrong path reachable on the 299 refuted problems; unlisted moves on the remaining problems still allow neutral retries. A separate `/statistics` page shows correct/wrong/unseen/accuracy. The SRS daily policy is not connected yet.
 - [ ] C3.3 Export and reproducible replay projection.
-- [ ] C3.4 First authorized and verified catalog of 100–300 problems. **Partial:** a local restricted Cho candidate catalog contains 861 problems; it is neither an authorized public catalog nor expert verified.
+- [ ] C3.4 First authorized and verified catalog of 100–300 problems. **Partial:** a local restricted Cho candidate catalog contains 835 problems (revision 2, 299 with prepared refutations, 26 explicit-`PASS` records quarantined); it is neither an authorized public catalog nor expert verified. Human content review and independent terminal verification remain open.
 
 ## Stage 4 — server
 
@@ -63,3 +63,5 @@ Requirements source: [PLAN.md](PLAN.md), roadmap §13. `[x]` means the stated wo
 - 2026-09-17: committed the bilingual/settings release as `2faddca` and deployed it through GitHub Pages run `35251645341`. The public practice, statistics, settings, and manifest URLs all returned HTTP 200; the published bundle contains the new language preference and English interface.
 - 2026-09-17: fixed horizontal board scrolling on narrow phones. `BoardAdapter` now subtracts computed horizontal padding from the container's `clientWidth` before sizing Shudan, and the board focus container clips overflow instead of creating a nested horizontal scroller. TypeScript, 21 test files / 58 tests, and the `/goba/` production build pass; real-phone confirmation remains required after deployment.
 - 2026-09-17: real-phone feedback showed that the first overflow fix hid the scrollbar but clipped the board. Replaced `BoundedGoban`'s iterative DOM sizing with a deterministic integer vertex-size calculation that accounts for the cropped grid, coordinate cells, border, content width, height cap, and a rounding inset. Added four mobile/wide geometry regressions. TypeScript, 22 test files / 62 tests, and the `/goba/` production build pass; deployment and phone confirmation remain pending.
+- 2026-09-18: investigated the first real content-quality report. The published 861-problem Cho pack has 2,670 explicit edges, all `correct`; it has no wrong edge, failure terminal, or prepared refutation. Therefore an unlisted legal move remains neutral and lets the learner retry indefinitely, making wrong statistics and mistake rotation unreachable for this pack. Screenshot problem `cho-elementary-0030` was admitted as `root-only-match` even though GNU Go proposed `PASS` with an empty tree and KataGo ranked A17 22nd. Documented the publication-gate failure and scope in `content/CHO_PACK_PRODUCT_AUDIT.md`; no fix was applied.
+- 2026-09-18: installed pack revision 2 built by the new refutation-expansion pipeline: 835 problems (26 explicit-`PASS` records quarantined, including problem 30), 299 problems with 1,835 prepared wrong branches, refutation replies, and failure terminals; every problem is labeled `verification.level: candidate`. Added the `candidate` level to the shared contract, an English translation for the new failure explanation, and an end-to-end acceptance test that plays an unknown probe (neutral), a prepared wrong move, receives the refutation, reaches the failure terminal, records an `Again` review and a wrong collection result, and rotates the problem into the mistakes queue. TypeScript, 23 test files / 69 tests, and both production builds pass.
