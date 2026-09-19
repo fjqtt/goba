@@ -7,23 +7,27 @@ import { importSgfCollection } from '../sgf/importer';
 
 const [
   collectionFile, auditFile, correctedCollectionFile, correctedAuditFile, reconciliationFile, outputDirectoryArg,
-  refutationsFile,
+  refutationsFile, adjustmentsFile,
 ] = process.argv.slice(2);
 if (!collectionFile || !auditFile || !correctedCollectionFile || !correctedAuditFile || !reconciliationFile || !outputDirectoryArg) {
   process.stderr.write(
     'Usage: npm run build:cho-client-pack --workspace @goba/generator -- '
       + '<cho.sgf> <audit.json> <corrected.sgf> <corrected-audit.json> '
-      + '<reconciliation.json> <output-directory> [refutations-report.json]\n',
+      + '<reconciliation.json> <output-directory> [refutations-report.json] [katago-adjustments.json]\n',
   );
   process.exitCode = 2;
 } else {
   await main(
     collectionFile, auditFile, correctedCollectionFile, correctedAuditFile, reconciliationFile, outputDirectoryArg,
-    refutationsFile,
+    refutationsFile, adjustmentsFile,
   );
 }
 
 type AuditReport = { results: ChoAuditResult[] };
+type KataGoAdjustments = {
+  quarantineProblemNumbers: number[];
+  correctAdditions: Array<{ problemNumber: number; nodeId: number; move: number }>;
+};
 
 async function main(
   collectionName: string,
@@ -33,15 +37,24 @@ async function main(
   reconciliationName: string,
   outputDirectoryName: string,
   refutationsName?: string,
+  adjustmentsName?: string,
 ): Promise<void> {
   const auditBytes = await readFile(resolve(auditName));
-  const [collection, correctedCollection, correctedAudit, reconciliation, refutationsReport] = await Promise.all([
+  const [collection, correctedCollection, correctedAudit, reconciliation, refutationsReport, adjustments] = await Promise.all([
     loadCollection(collectionName),
     loadCollection(correctedCollectionName),
     loadJson<AuditReport>(correctedAuditName),
     loadJson<{ unresolved: Array<{ problemNumber: number; category: string }> }>(reconciliationName),
     refutationsName ? loadJson<RefutationReport>(refutationsName) : Promise.resolve(undefined),
+    adjustmentsName ? loadJson<KataGoAdjustments>(adjustmentsName) : Promise.resolve(undefined),
   ]);
+  const katagoQuarantine = new Set(adjustments?.quarantineProblemNumbers ?? []);
+  const additionsByProblem = new Map<number, Array<{ nodeId: number; move: number }>>();
+  for (const addition of adjustments?.correctAdditions ?? []) {
+    const list = additionsByProblem.get(addition.problemNumber) ?? [];
+    list.push({ nodeId: addition.nodeId, move: addition.move });
+    additionsByProblem.set(addition.problemNumber, list);
+  }
   const audit = JSON.parse(auditBytes.toString('utf8')) as AuditReport;
   if (refutationsReport) {
     const auditSha256 = await hashBytes(new Uint8Array(auditBytes));
@@ -78,16 +91,29 @@ async function main(
         exclusions.push({ problemNumber: result.problemNumber, corpus, reason: 'quarantined-explicit-pass' });
         continue;
       }
-      const refutations = corpus === 'exact' ? refutationsByProblem.get(result.problemNumber) : undefined;
+      // KataGo escalation flagged the book line or found the position already settled.
+      if (katagoQuarantine.has(result.problemNumber)) {
+        exclusions.push({ problemNumber: result.problemNumber, corpus, reason: 'quarantined-katago-review' });
+        continue;
+      }
+      const correctAdditions = corpus === 'exact' ? additionsByProblem.get(result.problemNumber) : undefined;
+      // A KataGo-confirmed alternative supersedes a matching GNU Go wrong branch.
+      const refutations = corpus === 'exact'
+        ? refutationsByProblem.get(result.problemNumber)?.filter(branch => !correctAdditions?.some(
+          addition => addition.nodeId === branch.ply && addition.move === branch.move,
+        ))
+        : undefined;
       let problem;
       try {
         problem = await buildChoClientProblem({
-          audit: result, position, corpus, ...(refutations ? { refutations } : {}),
+          audit: result, position, corpus,
+          ...(refutations ? { refutations } : {}),
+          ...(correctAdditions ? { correctAdditions } : {}),
         });
       } catch (error) {
-        // A malformed refutation record must not abort the whole build; the problem
-        // ships without wrong branches and the mismatch is reported for review.
-        if (!refutations) throw error;
+        // A malformed refutation/addition record must not abort the whole build; the
+        // problem ships without extra branches and the mismatch is reported for review.
+        if (!refutations && !correctAdditions) throw error;
         refutationMergeWarnings.push({
           problemNumber: result.problemNumber,
           reason: error instanceof Error ? error.message : String(error),
@@ -131,12 +157,12 @@ async function main(
   }
   const manifest: PackManifestV1 = {
     packId: 'cho-chikun-elementary-local-candidates',
-    revision: 3,
+    revision: 4,
     schemaVersion: 1,
     minClientVersion: '0.1.0',
     shards,
     attribution: 'Restricted local research pack. Cho Chikun elementary positions and community printable lines.',
-    publishedAt: '2026-09-18T21:00:00+01:00',
+    publishedAt: '2026-09-19T15:00:00+01:00',
     revoked: [],
   };
   const manifestPath = resolve(outputDirectory, 'manifest.json');
@@ -152,8 +178,15 @@ async function main(
     exactCount: problems.filter(problem => problem.tags.includes('exact')).length,
     reconciledCount: problems.filter(problem => problem.tags.includes('reconciled')).length,
     excludedCount: exclusions.length,
-    quarantinedCount: exclusions.filter(item => item.reason === 'quarantined-explicit-pass').length,
+    quarantinedPass: exclusions.filter(item => item.reason === 'quarantined-explicit-pass').length,
+    quarantinedKatago: exclusions.filter(item => item.reason === 'quarantined-katago-review').length,
     withRefutations: problems.filter(problem => problem.tags.includes('has-refutations')).length,
+    withAlternatives: problems.filter(problem => problem.tags.includes('has-alternatives')).length,
+    alternativeEdges: problems.reduce((sum, problem) => sum + problem.nodes.reduce(
+      (inner, node) => inner + Math.max(0, node.edges.filter(
+        edge => edge.verdict === 'correct' && edge.role === 'solution',
+      ).length - 1), 0,
+    ), 0),
     studentWrongEdges: problems.reduce((sum, problem) => sum + problem.nodes.reduce(
       (inner, node) => inner + node.edges.filter(
         edge => edge.verdict === 'wrong' && edge.role === 'refutation',

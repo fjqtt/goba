@@ -1,0 +1,967 @@
+[
+  {
+    "problemNumber": 18,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 24,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 34,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 42,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 76,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 96,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 115,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 127,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 147,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 169,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 170,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 179,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 180,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 182,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 193,
+    "corpus": "exact",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 203,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 210,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 211,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 212,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 214,
+    "corpus": "exact",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 217,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 218,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 233,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 244,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 259,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 266,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 272,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 293,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 298,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 299,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 301,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 305,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 307,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 313,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 314,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 317,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 319,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 324,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 338,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 340,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 346,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 348,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 350,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 352,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 354,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 355,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 359,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 362,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 368,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 383,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 388,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 404,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 411,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 413,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 417,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 422,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 427,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 429,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 432,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 436,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 437,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 451,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 461,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 466,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 468,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 470,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 472,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 473,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 482,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 486,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 487,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 493,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 494,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 501,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 506,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 508,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 509,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 511,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 519,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 525,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 527,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 530,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 540,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 541,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 544,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 547,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 550,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 551,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 559,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 564,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 565,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 567,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 572,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 589,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 595,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 599,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 601,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 615,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 619,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 622,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 623,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 626,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 635,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 637,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 643,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 644,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 645,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 654,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 656,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 694,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 723,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 724,
+    "corpus": "exact",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 734,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 735,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 741,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 744,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 748,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 749,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 755,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 762,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 782,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 800,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 801,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 804,
+    "corpus": "exact",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 805,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 810,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 816,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 817,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 820,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 821,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 822,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 823,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 824,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 826,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 834,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 835,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 843,
+    "corpus": "exact",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 845,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 846,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 863,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 881,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 887,
+    "corpus": "exact",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 895,
+    "corpus": "exact",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 30,
+    "corpus": "reconciled",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 31,
+    "corpus": "reconciled",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 39,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 57,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 87,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 103,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 108,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 113,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 140,
+    "corpus": "reconciled",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 142,
+    "corpus": "reconciled",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 166,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 175,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 200,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 209,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 249,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 274,
+    "corpus": "reconciled",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 282,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 289,
+    "corpus": "reconciled",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 311,
+    "corpus": "reconciled",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 343,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 412,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 414,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 485,
+    "corpus": "reconciled",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 496,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 502,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 517,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 518,
+    "corpus": "reconciled",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 529,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 537,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 587,
+    "corpus": "reconciled",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 607,
+    "corpus": "reconciled",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 631,
+    "corpus": "reconciled",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 640,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 642,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 690,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 704,
+    "corpus": "reconciled",
+    "reason": "quarantined-explicit-pass"
+  },
+  {
+    "problemNumber": 746,
+    "corpus": "reconciled",
+    "reason": "source-line-illegal"
+  },
+  {
+    "problemNumber": 775,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 780,
+    "corpus": "reconciled",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 830,
+    "corpus": "reconciled",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 892,
+    "corpus": "reconciled",
+    "reason": "no-selected-target"
+  },
+  {
+    "problemNumber": 900,
+    "corpus": "reconciled",
+    "reason": "quarantined-katago-review"
+  },
+  {
+    "problemNumber": 4,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 8,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 40,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 93,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 216,
+    "corpus": "genuine-difference",
+    "reason": "both-versions-illegal"
+  },
+  {
+    "problemNumber": 420,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 533,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  },
+  {
+    "problemNumber": 617,
+    "corpus": "genuine-difference",
+    "reason": "genuine-setup-difference"
+  }
+]
