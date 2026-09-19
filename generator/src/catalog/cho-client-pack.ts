@@ -28,24 +28,29 @@ export type ChoAuditResult = {
   candidates: ChoAuditCandidate[];
 };
 
+export type CorrectAddition = { nodeId: number; move: number };
+
 export async function buildChoClientProblem(input: {
   audit: ChoAuditResult;
   position: Position;
   corpus: 'exact' | 'reconciled';
   refutations?: WrongBranch[];
+  correctAdditions?: CorrectAddition[];
 }): Promise<ProblemV1 | undefined> {
   const selected = input.audit.candidates.find(candidate => candidate.anchor === input.audit.selectedTarget);
   if (!selected || !input.audit.sourceLineReplay.legal || input.audit.expectedRootMoves.length === 0) {
     return undefined;
   }
   const wrongBranches = input.refutations ?? [];
+  const correctAdditions = input.correctAdditions ?? [];
   const nodes = buildLineNodes(
-    input.position, input.audit.sourceLine, input.audit.expectedRootMoves, selected.goalKind, wrongBranches,
+    input.position, input.audit.sourceLine, input.audit.expectedRootMoves, selected.goalKind,
+    wrongBranches, correctAdditions,
   );
   const problem: ProblemV1 = {
     schemaVersion: 1,
     problemId: `cho-elementary-${String(input.audit.problemNumber).padStart(4, '0')}`,
-    revision: 3,
+    revision: 4,
     learningVersion: 1,
     semanticHash: emptyHash(),
     boardSize: input.position.boardSize,
@@ -78,7 +83,8 @@ export async function buildChoClientProblem(input: {
       // Heuristic GNU Go/KataGo evidence is candidate material, never solver proof.
       level: 'candidate',
       auditId: `cho-2026-09-16-${input.corpus}-${input.audit.status}`
-        + (wrongBranches.length > 0 ? '+refutations-2026-09-18' : ''),
+        + (wrongBranches.length > 0 ? '+refutations-2026-09-18' : '')
+        + (correctAdditions.length > 0 ? '+katago-alternatives-2026-09-19' : ''),
       adapterVersion: 'printable-key+gnugo-3.8+katago-1.16.2-candidate-v1',
       scope: 'declared-position-and-rules',
     },
@@ -91,6 +97,7 @@ export async function buildChoClientProblem(input: {
     tags: [
       'life-and-death', 'cho-elementary', 'restricted-local', 'candidate', input.corpus, input.audit.status,
       ...(wrongBranches.length > 0 ? ['has-refutations'] : []),
+      ...(correctAdditions.length > 0 ? ['has-alternatives'] : []),
     ],
   };
   problem.semanticHash = await hashProblemSemantics(problem);
@@ -110,6 +117,7 @@ function buildLineNodes(
   expectedRoots: number[],
   goalKind: 'live' | 'capture',
   wrongBranches: WrongBranch[] = [],
+  correctAdditions: CorrectAddition[] = [],
 ): ProblemV1['nodes'] {
   const terminalOutcome = goalKind === 'capture' ? 'target-captured' : 'unconditional-life';
   if (line.length === 0) {
@@ -130,8 +138,34 @@ function buildLineNodes(
       color === position.toPlay ? undefined : 0);
   });
   nodes.push(terminal(opposite(line.at(-1)![0]), terminalOutcome));
+  appendCorrectAdditions(nodes, position, line, terminalOutcome, correctAdditions);
   appendWrongBranches(nodes, position, line, goalKind, wrongBranches);
   return nodes;
+}
+
+/**
+ * KataGo-confirmed alternative solutions. Product decision (2026-09-19, option A):
+ * the alternative move ends the attempt as an immediate success; no continuation
+ * line is prepared for it.
+ */
+function appendCorrectAdditions(
+  nodes: ProblemV1['nodes'],
+  position: Position,
+  line: Array<[Color, number]>,
+  terminalOutcome: 'target-captured' | 'unconditional-life',
+  additions: CorrectAddition[],
+): void {
+  for (const addition of additions) {
+    const lineNode = nodes[addition.nodeId];
+    if (addition.nodeId >= line.length || line[addition.nodeId]![0] !== position.toPlay || !lineNode) {
+      throw new Error(`Correct addition at node ${addition.nodeId} does not match a student node of the line`);
+    }
+    if (lineNode.edges.some(existing => existing.move === addition.move)) {
+      throw new Error(`Correct addition move ${addition.move} duplicates an existing edge at node ${addition.nodeId}`);
+    }
+    lineNode.edges.push({ move: addition.move, next: nodes.length, verdict: 'correct', role: 'solution' });
+    nodes.push(terminal(opposite(position.toPlay), terminalOutcome));
+  }
 }
 
 function appendWrongBranches(

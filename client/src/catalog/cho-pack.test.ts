@@ -30,7 +30,7 @@ describe('generated Cho client pack', () => {
     expect(problems).toHaveLength(CHO_PROBLEM_COUNT);
     expect(new Set(problems.map(problem => problem.problemId)).size).toBe(CHO_PROBLEM_COUNT);
     expect(problems[0]?.problemId).toBe('cho-elementary-0001');
-    expect(problems.at(-1)?.problemId).toBe('cho-elementary-0900');
+    expect(problems.at(-1)?.problemId).toBe('cho-elementary-0899');
     for (const problem of problems) await expectReplay(problem);
     // Replaying ~15k wrong branches with per-node SHA-256 exceeds the default
     // 5 s vitest timeout on slower CI runners.
@@ -43,7 +43,9 @@ describe('generated Cho client pack', () => {
     expect(ids.has('cho-elementary-0018')).toBe(false);
     expect(problems.every(problem => problem.verification.level === 'candidate')).toBe(true);
     const withRefutations = problems.filter(problem => problem.tags.includes('has-refutations'));
-    expect(withRefutations.length).toBeGreaterThanOrEqual(641);
+    expect(withRefutations.length).toBeGreaterThanOrEqual(579);
+    const withAlternatives = problems.filter(problem => problem.tags.includes('has-alternatives'));
+    expect(withAlternatives.length).toBeGreaterThanOrEqual(120);
   }, 30_000);
 
   it('grades a wrong move end to end: refutation, failure, wrong result, mistake rotation', async () => {

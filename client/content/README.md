@@ -2,21 +2,22 @@
 
 Client traverses a catalog independently of how it was obtained. Every problem needs a `ProblemV1` with an initial position, correct line, opponent replies, and prepared refutations. A bare position or only the first correct coordinate is insufficient.
 
-## Local candidate pack revision 3 — 2026-09-18
+## Local candidate pack revision 4 — 2026-09-19
 
-`client/public/packs/cho-elementary/3/` contains a local restricted pack:
+`client/public/packs/cho-elementary/4/` contains a local restricted pack:
 
-- **835/900** problems (revision 3);
+- **707/900** problems (revision 4; 128 problems quarantined by the 2026-09-19 KataGo verification pending review);
 - 823 exact-linked positions and 12 reconstructed positions with a legal printable line and a selected target group;
-- **641 problems carry prepared wrong branches**: 14,941 wrong student edges, each with a GNU Go refutation reply (or an immediate failure) and a failure terminal (plausibility radius 2, up to 12 branches per student node, all shipped audit statuses eligible);
+- **579 problems carry prepared wrong branches**: 13,401 wrong student edges, each with a GNU Go refutation reply (or an immediate failure) and a failure terminal (plausibility radius 2, up to 12 branches per student node, all shipped audit statuses eligible);
 - **26 problems are quarantined** (`quarantined-explicit-pass`, including problem 30) because GNU Go's primary result for the selected target was `PASS`; they need human review before re-publication;
 - every problem is labeled `verification.level: candidate` — heuristic GNU Go/KataGo evidence is never serialized as `solver-checked`;
-- 9 JSON shards, about 10 MiB total;
+- **120 problems carry 299 KataGo-confirmed alternative solutions** as correct edges to an immediate success terminal;
+- 8 JSON shards, about 10 MiB total;
 - the manifest records SHA-256, byte size, and problem count for every shard;
 - Client verifies the manifest, hash, size, and ProblemV1 data before atomically activating the pack in IndexedDB;
 - the service worker precaches the pack JSON.
 
-**65** problems are excluded: 26 quarantined explicit-PASS records, 21 without a selected target group, 10 with an illegal printable line, and 8 with a real version/setup difference. The full list is in `client/public/packs/cho-elementary/3/exclusions.json`.
+**65** problems are excluded: 26 quarantined explicit-PASS records, 21 without a selected target group, 10 with an illegal printable line, and 8 with a real version/setup difference. The full list is in `client/public/packs/cho-elementary/4/exclusions.json`.
 
 The pack remains `LicenseRef-Restricted-Research` and must not be described as an authorized public catalog. Solution lines come from a community printable key. Missing branches remain `unclassified` in the data; since 2026-09-18 the Client grades any legal off-tree move as an immediate mistake by product decision, so unreviewed correct alternatives are misgraded until they are added as explicit correct edges.
 
@@ -37,8 +38,9 @@ npm run build:cho-client-pack --workspace @goba/generator -- \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/corrected-positions.sgf \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/gnugo-audit/audit-report.json \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/reconciliation-report.json \
-  "$(pwd)/client/public/packs/cho-elementary/3" \
-  ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json
+  "$(pwd)/client/public/packs/cho-elementary/4" \
+  ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json \
+  ~/Documents/goba-research-artifacts/goba-cho-katago-verify/katago-adjustments.json
 ```
 
 ## Cho Chikun sources found

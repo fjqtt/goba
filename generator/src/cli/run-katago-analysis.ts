@@ -28,10 +28,11 @@ async function main(queryName: string, resultName: string, logName: string, limi
   const logPath = resolve(logName);
   await Promise.all([mkdir(dirname(resultPath), { recursive: true }), mkdir(dirname(logPath), { recursive: true })]);
 
+  const extraOverrides = process.env.KATAGO_EXTRA_OVERRIDES ? `,${process.env.KATAGO_EXTRA_OVERRIDES}` : '';
   const child = spawn(binary, [
     'analysis', '-config', config, '-model', model,
     '-override-config', `numAnalysisThreads=${process.env.KATAGO_ANALYSIS_THREADS ?? '8'},`
-      + 'numSearchThreadsPerAnalysisThread=1,nnMaxBatchSize=16',
+      + `numSearchThreadsPerAnalysisThread=1,nnMaxBatchSize=16${extraOverrides}`,
   ], { stdio: ['pipe', 'pipe', 'pipe'] });
   const stdout: Buffer[] = [];
   const stderr: Buffer[] = [];
@@ -53,11 +54,12 @@ async function main(queryName: string, resultName: string, logName: string, limi
     }
   });
   child.stderr.on('data', chunk => stderr.push(Buffer.from(chunk)));
+  const timeoutMinutes = positiveInt(process.env.KATAGO_TIMEOUT_MINUTES, 60);
   const exitCode = await new Promise<number>((resolvePromise, reject) => {
     const timeout = setTimeout(() => {
       child.kill('SIGKILL');
-      reject(new Error('KataGo analysis exceeded 60 minutes'));
-    }, 60 * 60 * 1000);
+      reject(new Error(`KataGo analysis exceeded ${timeoutMinutes} minutes`));
+    }, timeoutMinutes * 60 * 1000);
     child.on('error', error => {
       clearTimeout(timeout);
       reject(error);
@@ -89,4 +91,10 @@ async function main(queryName: string, resultName: string, logName: string, limi
     config,
     model,
   })}\n`);
+}
+
+function positiveInt(value: string | undefined, fallback: number): number {
+  if (!value) return fallback;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 }

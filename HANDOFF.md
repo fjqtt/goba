@@ -111,11 +111,13 @@ All repository Markdown documentation was rewritten in English. Architecture, ga
 
 ## Cho Client pack
 
-Location: `client/public/packs/cho-elementary/3/` (revision 3; revisions 1 and 2 removed).
+Location: `client/public/packs/cho-elementary/4/` (revision 4; revisions 1-3 removed).
 
-- 835/900 problems included.
-- 823 exact-linked setups and 12 reconciled setups with a legal printable line and selected GNU Go target.
-- 641 problems carry prepared wrong branches: 14,941 wrong edges with refutation replies (or immediate failure) and failure terminals. Coverage expansion v3 (2026-09-18): plausibility radius 2, up to 12 branches per student node, and eligibility extended from full-line-match to all shipped statuses; 51 problems where GNU Go rejected the printable move at some node ship without branches and await review; the pack is about 10 MiB.
+- 707/900 problems included (702 exact, 5 reconciled).
+- 579 problems carry prepared wrong branches: 13,401 wrong edges with refutation replies (or immediate failure) and failure terminals (coverage v3: plausibility radius 2, up to 12 branches per student node, all shipped audit statuses).
+- 120 problems carry 299 KataGo-confirmed alternative solutions as correct edges to an immediate success terminal (owner decision, option A: no continuation line is prepared).
+- KataGo verification (2026-09-19, see below) quarantined 128 problems: 114 where the book move does not achieve the goal by ownership at 300 visits, and 14 that stay solved even when the student passes.
+- 8 shards, about 10 MiB.
 - Every problem is labeled `verification.level: candidate`.
 - 9 JSON shards, about 2.9 MiB.
 - Manifest records SHA-256, expanded size, and count.
@@ -156,8 +158,27 @@ npm run build:cho-client-pack --workspace @goba/generator -- \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/corrected-positions.sgf \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/gnugo-audit/audit-report.json \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/reconciliation-report.json \
-  "$(pwd)/client/public/packs/cho-elementary/3" \
-  ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json
+  "$(pwd)/client/public/packs/cho-elementary/4" \
+  ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json \
+  ~/Documents/goba-research-artifacts/goba-cho-katago-verify/katago-adjustments.json
+```
+
+KataGo verification rerun (prepare queries, analyze at pinned BLACK perspective, report):
+
+```bash
+npm run verify:cho-katago --workspace @goba/generator -- prepare \
+  "$(pwd)/client/public/packs/cho-elementary/4" \
+  ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json \
+  ~/Documents/goba-research-artifacts/goba-cho-katago-verify 32
+
+KATAGO_EXTRA_OVERRIDES=reportAnalysisWinratesAs=BLACK KATAGO_TIMEOUT_MINUTES=180 \
+KATAGO_ANALYSIS_THREADS=24 npm run run:katago-analysis --workspace @goba/generator -- \
+  ~/Documents/goba-research-artifacts/goba-cho-katago-verify/queries.jsonl \
+  ~/Documents/goba-research-artifacts/goba-cho-katago-verify/results.jsonl \
+  ~/Documents/goba-research-artifacts/goba-cho-katago-verify/katago.log
+
+npm run verify:cho-katago --workspace @goba/generator -- report \
+  ~/Documents/goba-research-artifacts/goba-cho-katago-verify
 ```
 
 Note: `npm --workspace` resolves relative paths against `generator/`, so pass the output directory as an absolute path.
@@ -175,6 +196,8 @@ Note: `npm --workspace` resolves relative paths against `generator/`, so pass th
 - RZS remains blocked on a reproducible Linux/amd64 CUDA worker. Apple Silicon Docker emulates amd64 but supplies no NVIDIA device.
 - Review queue: 254 KataGo disagreement/invalid states.
 - Refutation expansion (2026-09-18): 302/305 clean full-line problems expanded with 1,847 GNU Go-verified wrong branches ranked by KataGo policy; 3 `book-move-rejected` (problems 318, 417, 541) and 528 alternative-correct candidates await review. Report: `~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json`.
+- KataGo pack verification (2026-09-19, `verify:cho-katago`): 20,274 after-states at 32 visits with `reportAnalysisWinratesAs=BLACK` and ownership of the target chain (winrate is uninformative at komi 0 on a mostly empty board), plus 1,115 escalations (280 flagged states at 300 visits, 835 pass-root probes at 128 visits — the student passes and the goal must NOT survive, which is the correct already-settled test; root ownership with the student to move reflects the solved outcome and must not be used). Results: 99.5% of wrong branches confirmed; 53 false wrongs converted to correct edges; 114 book-doubtful and 14 truly-settled problems quarantined (`quarantined-katago-review`); 742/2,711 alternatives confirmed (299 shipped, 496 fell with quarantined problems), 1,625 rejected, 344 unclear remain in review. Reports: `~/Documents/goba-research-artifacts/goba-cho-katago-verify/`.
+- Modern-solver research (2026-09-19): see `generator/SOLVER_RESEARCH_2026-09.md` — study-LD-RZ (RZS-PT, Feb 2026) is the proof-lane candidate pending a license answer from the RLG lab; KataGo 1.18.2 + tsumego-frame is the cheap heuristic-lane upgrade.
 - Generator queues/drafts remain in memory; no PostgreSQL leases, editor, terminal verifier, or publication pipeline exists.
 
 Key research documents:

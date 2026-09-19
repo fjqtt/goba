@@ -1,0 +1,67 @@
+{
+  "packId": "cho-chikun-elementary-local-candidates",
+  "revision": 4,
+  "schemaVersion": 1,
+  "minClientVersion": "0.1.0",
+  "shards": [
+    {
+      "path": "problems-001.json",
+      "sha256": "sha256:0d1b5b1270c627c6f94997f5e347312237c06a5b60a80666c781aa3602e4de40",
+      "bytes": 1123749,
+      "expandedBytes": 1123749,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-002.json",
+      "sha256": "sha256:34e3068a35882375bfb5ddf7d6cb4e80da290428022d1495e471c4b4dfb16cab",
+      "bytes": 1482248,
+      "expandedBytes": 1482248,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-003.json",
+      "sha256": "sha256:8718f5b351fcc66501a820b209a878dde0889875ff6b6674388cfa105cf62485",
+      "bytes": 1103122,
+      "expandedBytes": 1103122,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-004.json",
+      "sha256": "sha256:5d9c98abb2ccf4425ea28cb84ca4ede98b64eddc419dabaf7c3e7fb104ef7d7f",
+      "bytes": 1483916,
+      "expandedBytes": 1483916,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-005.json",
+      "sha256": "sha256:676e30aaa903f04f18aab111d5a5ac852af2a77edb63c988c82ae8fe1958c366",
+      "bytes": 1486089,
+      "expandedBytes": 1486089,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-006.json",
+      "sha256": "sha256:6878c83c8c8e99a2a1fd5ad5b54b6bae602b5e8833190c226999cc10021ae38f",
+      "bytes": 1445859,
+      "expandedBytes": 1445859,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-007.json",
+      "sha256": "sha256:f338ae9c5253bb3e8066bb096a831d079efb3b677828e70473852b5043ff4699",
+      "bytes": 1552060,
+      "expandedBytes": 1552060,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-008.json",
+      "sha256": "sha256:1b55d4549a72c2e85d17efe1c651f72d255c4b17075012b857dd881b1c6e2759",
+      "bytes": 120997,
+      "expandedBytes": 120997,
+      "problemCount": 7
+    }
+  ],
+  "attribution": "Restricted local research pack. Cho Chikun elementary positions and community printable lines.",
+  "publishedAt": "2026-09-19T15:00:00+01:00",
+  "revoked": []
+}
