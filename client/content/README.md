@@ -2,13 +2,13 @@
 
 Client traverses a catalog independently of how it was obtained. Every problem needs a `ProblemV1` with an initial position, correct line, opponent replies, and prepared refutations. A bare position or only the first correct coordinate is insufficient.
 
-## Local candidate pack revision 5 — 2026-09-21
+## Local candidate pack revision 6 — 2026-09-21
 
-`client/public/packs/cho-elementary/5/` contains a local restricted pack:
+`client/public/packs/cho-elementary/6/` contains a local restricted pack:
 
-- **747/900** problems (revision 5; 88 problems remain quarantined for human review after the 2026-09-21 framed deep review re-admitted 44);
+- **773/900** problems (revision 6; the framed deep review re-admitted 44 and the target re-selection sweep re-encoded another 26; 62 problems remain quarantined for human review);
 - 823 exact-linked positions and 12 reconstructed positions with a legal printable line and a selected target group;
-- **603 problems carry prepared wrong branches**: 14,117 wrong student edges, each with a GNU Go refutation reply (or an immediate failure) and a failure terminal (plausibility radius 2, up to 12 branches per student node, all shipped audit statuses eligible);
+- **618 problems carry prepared wrong branches**: 14,393 wrong student edges, each with a GNU Go refutation reply (or an immediate failure) and a failure terminal (plausibility radius 2, up to 12 branches per student node, all shipped audit statuses eligible);
 - **26 problems are quarantined** (`quarantined-explicit-pass`, including problem 30) because GNU Go's primary result for the selected target was `PASS`; they need human review before re-publication;
 - every problem is labeled `verification.level: candidate` — heuristic GNU Go/KataGo evidence is never serialized as `solver-checked`;
 - **181 problems carry KataGo-confirmed alternative solutions** as correct edges to an immediate success terminal;
@@ -17,7 +17,7 @@ Client traverses a catalog independently of how it was obtained. Every problem n
 - Client verifies the manifest, hash, size, and ProblemV1 data before atomically activating the pack in IndexedDB;
 - the service worker precaches the pack JSON.
 
-**153** problems are excluded: 88 quarantined by KataGo review, 26 quarantined explicit-PASS records, 21 without a selected target group, 10 with an illegal printable line, and 8 with a real version/setup difference. The full list is in `client/public/packs/cho-elementary/5/exclusions.json`.
+**127** problems are excluded: 62 quarantined by KataGo review, 26 quarantined explicit-PASS records, 21 without a selected target group, 10 with an illegal printable line, and 8 with a real version/setup difference. The full list is in `client/public/packs/cho-elementary/6/exclusions.json`.
 
 The pack remains `LicenseRef-Restricted-Research` and must not be described as an authorized public catalog. Solution lines come from a community printable key. Missing branches remain `unclassified` in the data; since 2026-09-18 the Client grades any legal off-tree move as an immediate mistake by product decision, so unreviewed correct alternatives are misgraded until they are added as explicit correct edges.
 
@@ -38,9 +38,9 @@ npm run build:cho-client-pack --workspace @goba/generator -- \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/corrected-positions.sgf \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/gnugo-audit/audit-report.json \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/reconciliation-report.json \
-  "$(pwd)/client/public/packs/cho-elementary/5" \
-  ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json \
-  ~/Documents/goba-research-artifacts/goba-cho-deep-review/katago-adjustments-v2.json
+  "$(pwd)/client/public/packs/cho-elementary/6" \
+  ~/Documents/goba-research-artifacts/goba-cho-deep-review/refutations-merged.json \
+  ~/Documents/goba-research-artifacts/goba-cho-deep-review/katago-adjustments-v3.json
 ```
 
 ## Cho Chikun sources found

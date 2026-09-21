@@ -50,6 +50,8 @@ Requirements source: [PLAN.md](PLAN.md), roadmap §13. `[x]` means the stated wo
 
 ## Work log
 
+- 2026-09-21 (later): installed pack revision 6 after the target re-selection sweep: 773 problems (26 quarantined problems re-encoded with KataGo-validated target groups and regenerated refutations), 618 with refutations, 62 + 26 problems remain quarantined for human review. TypeScript, 23 files / 70 tests, and the `/goba/` build (11,071 KiB precache) pass.
+
 - 2026-09-21: installed pack revision 5 after the framed deep review with KataGo 1.18.2/b18c384nbt: 747 problems (44 re-admitted from quarantine, 4 newly quarantined, 88 remain for human review), 603 with refutations, 181 with confirmed alternative solutions. TypeScript, 23 files / 70 tests, and the `/goba/` build (10,858 KiB precache) pass.
 
 - 2026-09-19: installed pack revision 4 after the KataGo verification sweep: 707 problems (128 quarantined for review — book-move-doubtful or genuinely settled), 579 with refutations, and 120 problems now accept 299 KataGo-confirmed alternative solutions as correct moves (immediate success, option A), which removes the corresponding false mistakes under the off-tree rule. TypeScript, 23 files / 70 tests, and the `/goba/` build (10,278 KiB precache) pass.

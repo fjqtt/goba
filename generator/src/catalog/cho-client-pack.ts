@@ -50,7 +50,7 @@ export async function buildChoClientProblem(input: {
   const problem: ProblemV1 = {
     schemaVersion: 1,
     problemId: `cho-elementary-${String(input.audit.problemNumber).padStart(4, '0')}`,
-    revision: 5,
+    revision: 6,
     learningVersion: 1,
     semanticHash: emptyHash(),
     boardSize: input.position.boardSize,

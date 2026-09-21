@@ -1,0 +1,67 @@
+{
+  "packId": "cho-chikun-elementary-local-candidates",
+  "revision": 6,
+  "schemaVersion": 1,
+  "minClientVersion": "0.1.0",
+  "shards": [
+    {
+      "path": "problems-001.json",
+      "sha256": "sha256:c398515eda4495db03319381acadca96a4f764cb6d673d58e9a97b745fbf4c9e",
+      "bytes": 1116339,
+      "expandedBytes": 1116339,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-002.json",
+      "sha256": "sha256:d7a7700ab4af609c81de17f6f3fd50de07f309cfaaa2b8260b25689c7a6c5c6e",
+      "bytes": 1456857,
+      "expandedBytes": 1456857,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-003.json",
+      "sha256": "sha256:2bb8376451c4057abc58004fc0e62abc80aaacabd775013a3f53dee19d0c1adc",
+      "bytes": 1159113,
+      "expandedBytes": 1159113,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-004.json",
+      "sha256": "sha256:f232a70200f80fc633eab8201e7f8686cc731301c418594cab288945af5aa33e",
+      "bytes": 1319502,
+      "expandedBytes": 1319502,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-005.json",
+      "sha256": "sha256:a3f5dac1549e28dec21a79c192c54d8697b54d05e3f071e4e3f4905c0ac9f831",
+      "bytes": 1398018,
+      "expandedBytes": 1398018,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-006.json",
+      "sha256": "sha256:a6d8b8d2344dfc0633099fdc2330c67702a11cf926270807bf9d283474778b1f",
+      "bytes": 1454914,
+      "expandedBytes": 1454914,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-007.json",
+      "sha256": "sha256:4939b016087d111aab0c9d1fac83e61da66e90c452b2f4f93279bb2e9e16a486",
+      "bytes": 1634002,
+      "expandedBytes": 1634002,
+      "problemCount": 100
+    },
+    {
+      "path": "problems-008.json",
+      "sha256": "sha256:2b62c7f32551557eb3848d9295439fdcbfd09caf1feaebacd621cb6fef9d45dc",
+      "bytes": 1078358,
+      "expandedBytes": 1078358,
+      "problemCount": 73
+    }
+  ],
+  "attribution": "Restricted local research pack. Cho Chikun elementary positions and community printable lines.",
+  "publishedAt": "2026-09-21T19:00:00+01:00",
+  "revoked": []
+}

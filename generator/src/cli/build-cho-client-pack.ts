@@ -27,6 +27,8 @@ type AuditReport = { results: ChoAuditResult[] };
 type KataGoAdjustments = {
   quarantineProblemNumbers: number[];
   correctAdditions: Array<{ problemNumber: number; nodeId: number; move: number }>;
+  /** Framed-KataGo re-selected target anchors that override the audit selection. */
+  retargets?: Array<{ problemNumber: number; anchor: number }>;
 };
 
 async function main(
@@ -49,6 +51,7 @@ async function main(
     adjustmentsName ? loadJson<KataGoAdjustments>(adjustmentsName) : Promise.resolve(undefined),
   ]);
   const katagoQuarantine = new Set(adjustments?.quarantineProblemNumbers ?? []);
+  const retargetByProblem = new Map((adjustments?.retargets ?? []).map(item => [item.problemNumber, item.anchor]));
   const additionsByProblem = new Map<number, Array<{ nodeId: number; move: number }>>();
   for (const addition of adjustments?.correctAdditions ?? []) {
     const list = additionsByProblem.get(addition.problemNumber) ?? [];
@@ -82,12 +85,16 @@ async function main(
     ['exact', audit, exactPositions],
     ['reconciled', correctedAudit, correctedPositions],
   ] as const) {
-    for (const result of report.results) {
-      const position = positions.get(result.problemNumber);
-      if (!position) throw new Error(`Missing ${corpus} position ${result.problemNumber}`);
+    for (const rawResult of report.results) {
+      const position = positions.get(rawResult.problemNumber);
+      if (!position) throw new Error(`Missing ${corpus} position ${rawResult.problemNumber}`);
+      // A framed-KataGo retarget re-encodes the problem with a different target group.
+      const retargetAnchor = corpus === 'exact' ? retargetByProblem.get(rawResult.problemNumber) : undefined;
+      const result = retargetAnchor === undefined ? rawResult : { ...rawResult, selectedTarget: retargetAnchor };
       const selected = result.candidates.find(candidate => candidate.anchor === result.selectedTarget);
-      // GNU Go proposing PASS means the position may already be settled; quarantine until human review.
-      if (selected?.primaryMove === 'PASS') {
+      // GNU Go proposing PASS means the position may already be settled; quarantine until
+      // human review. A framed-KataGo retarget already verified the goal and overrides this.
+      if (retargetAnchor === undefined && selected?.primaryMove === 'PASS') {
         exclusions.push({ problemNumber: result.problemNumber, corpus, reason: 'quarantined-explicit-pass' });
         continue;
       }
@@ -157,12 +164,12 @@ async function main(
   }
   const manifest: PackManifestV1 = {
     packId: 'cho-chikun-elementary-local-candidates',
-    revision: 5,
+    revision: 6,
     schemaVersion: 1,
     minClientVersion: '0.1.0',
     shards,
     attribution: 'Restricted local research pack. Cho Chikun elementary positions and community printable lines.',
-    publishedAt: '2026-09-21T14:00:00+01:00',
+    publishedAt: '2026-09-21T19:00:00+01:00',
     revoked: [],
   };
   const manifestPath = resolve(outputDirectory, 'manifest.json');
