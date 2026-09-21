@@ -157,12 +157,12 @@ async function main(
   }
   const manifest: PackManifestV1 = {
     packId: 'cho-chikun-elementary-local-candidates',
-    revision: 4,
+    revision: 5,
     schemaVersion: 1,
     minClientVersion: '0.1.0',
     shards,
     attribution: 'Restricted local research pack. Cho Chikun elementary positions and community printable lines.',
-    publishedAt: '2026-09-19T15:00:00+01:00',
+    publishedAt: '2026-09-21T14:00:00+01:00',
     revoked: [],
   };
   const manifestPath = resolve(outputDirectory, 'manifest.json');
