@@ -25,9 +25,9 @@ export const BOOK: BookConfig = {
   id: 'cho-elementary',
   collectionId: 'cho-chikun-elementary-local-candidates-v1',
   packId: 'cho-chikun-elementary-local-candidates',
-  packRevision: 4,
-  problemCount: 707,
-  packManifestPath: 'packs/cho-elementary/4/manifest.json',
+  packRevision: 5,
+  problemCount: 747,
+  packManifestPath: 'packs/cho-elementary/5/manifest.json',
   title: {
     ru: 'Чо Чикун. Начальный уровень',
     en: 'Cho Chikun Elementary',

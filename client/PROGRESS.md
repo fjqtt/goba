@@ -50,6 +50,8 @@ Requirements source: [PLAN.md](PLAN.md), roadmap §13. `[x]` means the stated wo
 
 ## Work log
 
+- 2026-09-21: installed pack revision 5 after the framed deep review with KataGo 1.18.2/b18c384nbt: 747 problems (44 re-admitted from quarantine, 4 newly quarantined, 88 remain for human review), 603 with refutations, 181 with confirmed alternative solutions. TypeScript, 23 files / 70 tests, and the `/goba/` build (10,858 KiB precache) pass.
+
 - 2026-09-19: installed pack revision 4 after the KataGo verification sweep: 707 problems (128 quarantined for review — book-move-doubtful or genuinely settled), 579 with refutations, and 120 problems now accept 299 KataGo-confirmed alternative solutions as correct moves (immediate success, option A), which removes the corresponding false mistakes under the off-tree rule. TypeScript, 23 files / 70 tests, and the `/goba/` build (10,278 KiB precache) pass.
 
 - 2026-09-18 (off-tree rule): by owner decision, a legal move outside the verified tree is now graded as an immediate mistake instead of the neutral "not verified" reply: the stone is placed, the attempt ends as `failure` without a refutation demonstration, the wrong result and `Again` rating are recorded, and the problem rotates into mistakes. The retired neutral phase was removed from the engine; old checkpoints carrying it restore as `ready`, and a failed off-tree checkpoint restores its final off-graph move. The alternative-correct review queue (2,711 candidates) is now grading-critical because unadded correct alternatives are misgraded. Tests updated; 23 files / 70 tests pass.

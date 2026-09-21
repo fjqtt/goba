@@ -18,7 +18,8 @@
     "build:cho-client-pack": "tsx src/cli/build-cho-client-pack.ts",
     "expand:cho-refutations": "tsx src/cli/expand-cho-refutations.ts",
     "verify:cho-katago": "tsx src/cli/verify-cho-with-katago.ts",
-    "build": "tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json",
+    "deep-review:cho": "tsx src/cli/deep-review-cho.ts"
   },
   "dependencies": {
     "@goba/problem-contract": "0.1.0",

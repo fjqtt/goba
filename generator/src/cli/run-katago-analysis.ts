@@ -15,11 +15,12 @@ if (!queryFile || !resultFile || !logFile) {
 }
 
 async function main(queryName: string, resultName: string, logName: string, limit?: number): Promise<void> {
+  // /opt/homebrew/opt/katago tracks the currently installed Homebrew version.
   const binary = process.env.KATAGO_BIN ?? '/opt/homebrew/bin/katago';
   const config = process.env.KATAGO_CONFIG
-    ?? '/opt/homebrew/Cellar/katago/1.16.2/share/katago/configs/analysis_example.cfg';
+    ?? '/opt/homebrew/opt/katago/share/katago/configs/analysis_example.cfg';
   const model = process.env.KATAGO_MODEL
-    ?? '/opt/homebrew/Cellar/katago/1.16.2/share/katago/g170e-b20c256x2-s5303129600-d1228401921.bin.gz';
+    ?? '/opt/homebrew/opt/katago/share/katago/kata1-b18c384nbt-s9996604416-d4316597426.bin.gz';
   await Promise.all([binary, config, model].map(async path => access(path, constants.R_OK)));
   const rawQueries = await readFile(resolve(queryName), 'utf8');
   const allQueries = rawQueries.split('\n').filter(Boolean);

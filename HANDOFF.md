@@ -111,12 +111,12 @@ All repository Markdown documentation was rewritten in English. Architecture, ga
 
 ## Cho Client pack
 
-Location: `client/public/packs/cho-elementary/4/` (revision 4; revisions 1-3 removed).
+Location: `client/public/packs/cho-elementary/5/` (revision 5; revisions 1-4 removed).
 
-- 707/900 problems included (702 exact, 5 reconciled).
-- 579 problems carry prepared wrong branches: 13,401 wrong edges with refutation replies (or immediate failure) and failure terminals (coverage v3: plausibility radius 2, up to 12 branches per student node, all shipped audit statuses).
-- 120 problems carry 299 KataGo-confirmed alternative solutions as correct edges to an immediate success terminal (owner decision, option A: no continuation line is prepared).
-- KataGo verification (2026-09-19, see below) quarantined 128 problems: 114 where the book move does not achieve the goal by ownership at 300 visits, and 14 that stay solved even when the student passes.
+- 747/900 problems included (742 exact, 5 reconciled).
+- 603 problems carry prepared wrong branches: 14,117 wrong edges with refutation replies (or immediate failure) and failure terminals (coverage v3: plausibility radius 2, up to 12 branches per student node, all shipped audit statuses).
+- 181 problems carry KataGo-confirmed alternative solutions as correct edges to an immediate success terminal (owner decision, option A: no continuation line is prepared).
+- Quarantine after the 2026-09-21 framed deep review: 88 problems (`quarantined-katago-review`; 44 of the original 128 were re-admitted at 800 framed visits, 4 book-move-rejected problems were added) plus the 26 explicit-`PASS` problems (all confirmed genuinely settled or unverifiable by the framed pass test).
 - 8 shards, about 10 MiB.
 - Every problem is labeled `verification.level: candidate`.
 - 9 JSON shards, about 2.9 MiB.
@@ -158,16 +158,16 @@ npm run build:cho-client-pack --workspace @goba/generator -- \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/corrected-positions.sgf \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/gnugo-audit/audit-report.json \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/reconciliation-report.json \
-  "$(pwd)/client/public/packs/cho-elementary/4" \
+  "$(pwd)/client/public/packs/cho-elementary/5" \
   ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json \
-  ~/Documents/goba-research-artifacts/goba-cho-katago-verify/katago-adjustments.json
+  ~/Documents/goba-research-artifacts/goba-cho-deep-review/katago-adjustments-v2.json
 ```
 
 KataGo verification rerun (prepare queries, analyze at pinned BLACK perspective, report):
 
 ```bash
 npm run verify:cho-katago --workspace @goba/generator -- prepare \
-  "$(pwd)/client/public/packs/cho-elementary/4" \
+  "$(pwd)/client/public/packs/cho-elementary/5" \
   ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json \
   ~/Documents/goba-research-artifacts/goba-cho-katago-verify 32
 
@@ -197,7 +197,9 @@ Note: `npm --workspace` resolves relative paths against `generator/`, so pass th
 - Review queue: 254 KataGo disagreement/invalid states.
 - Refutation expansion (2026-09-18): 302/305 clean full-line problems expanded with 1,847 GNU Go-verified wrong branches ranked by KataGo policy; 3 `book-move-rejected` (problems 318, 417, 541) and 528 alternative-correct candidates await review. Report: `~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json`.
 - KataGo pack verification (2026-09-19, `verify:cho-katago`): 20,274 after-states at 32 visits with `reportAnalysisWinratesAs=BLACK` and ownership of the target chain (winrate is uninformative at komi 0 on a mostly empty board), plus 1,115 escalations (280 flagged states at 300 visits, 835 pass-root probes at 128 visits — the student passes and the goal must NOT survive, which is the correct already-settled test; root ownership with the student to move reflects the solved outcome and must not be used). Results: 99.5% of wrong branches confirmed; 53 false wrongs converted to correct edges; 114 book-doubtful and 14 truly-settled problems quarantined (`quarantined-katago-review`); 742/2,711 alternatives confirmed (299 shipped, 496 fell with quarantined problems), 1,625 rejected, 344 unclear remain in review. Reports: `~/Documents/goba-research-artifacts/goba-cho-katago-verify/`.
-- Modern-solver research (2026-09-19): see `generator/SOLVER_RESEARCH_2026-09.md` — study-LD-RZ (RZS-PT, Feb 2026) is the proof-lane candidate pending a license answer from the RLG lab; KataGo 1.18.2 + tsumego-frame is the cheap heuristic-lane upgrade.
+- Modern-solver research (2026-09-19): see `generator/SOLVER_RESEARCH_2026-09.md` — study-LD-RZ (RZS-PT, Feb 2026) is the proof-lane candidate pending a license answer from the RLG lab.
+- KataGo lane upgraded (2026-09-21): Homebrew KataGo 1.18.2 with the bundled kata1-b18c384nbt transformer net on Metal; runner defaults now use the version-agnostic `/opt/homebrew/opt/katago` paths. New `deep-review:cho` CLI implements the tsumego frame: the board outside the problem box is filled with two unconditionally alive walls (grid eyes; components without two eyes stay empty) and komi neutralizes the frame balance. Framed winrate still saturates (the surrounding wall usually outweighs the corner group even on failure), so target ownership remains the gating signal; the frame removes global tenuki noise. Framed root benchmark: the new net matches an expected book root as its top search move in 94/100 clean problems at 128 visits.
+- Deep review (2026-09-21, 727 framed queries at 800/500/128 visits): 44/121 katago-quarantined problems re-admitted, 7 confirmed settled, 70 keep-quarantined for human review; all 26 explicit-PASS problems stay excluded (16 confirmed settled by the pass probe); 4 of 27 in-pack book-move-rejected problems newly quarantined; 155/297 unclear alternatives confirmed (now shipped), 124 rejected, 18 remain unclear. Reports: `~/Documents/goba-research-artifacts/goba-cho-deep-review/`.
 - Generator queues/drafts remain in memory; no PostgreSQL leases, editor, terminal verifier, or publication pipeline exists.
 
 Key research documents:
