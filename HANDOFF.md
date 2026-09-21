@@ -111,12 +111,12 @@ All repository Markdown documentation was rewritten in English. Architecture, ga
 
 ## Cho Client pack
 
-Location: `client/public/packs/cho-elementary/5/` (revision 5; revisions 1-4 removed).
+Location: `client/public/packs/cho-elementary/6/` (revision 6; revisions 1-5 removed).
 
-- 747/900 problems included (742 exact, 5 reconciled).
-- 603 problems carry prepared wrong branches: 14,117 wrong edges with refutation replies (or immediate failure) and failure terminals (coverage v3: plausibility radius 2, up to 12 branches per student node, all shipped audit statuses).
+- 773/900 problems included (768 exact, 5 reconciled).
+- 618 problems carry prepared wrong branches: 14,393 wrong edges with refutation replies (or immediate failure) and failure terminals (coverage v3: plausibility radius 2, up to 12 branches per student node, all shipped audit statuses).
 - 181 problems carry KataGo-confirmed alternative solutions as correct edges to an immediate success terminal (owner decision, option A: no continuation line is prepared).
-- Quarantine after the 2026-09-21 framed deep review: 88 problems (`quarantined-katago-review`; 44 of the original 128 were re-admitted at 800 framed visits, 4 book-move-rejected problems were added) plus the 26 explicit-`PASS` problems (all confirmed genuinely settled or unverifiable by the framed pass test).
+- Quarantine after the 2026-09-21 framed deep review and target re-selection: 62 problems (`quarantined-katago-review`) plus the 26 explicit-`PASS` problems. The retarget sweep re-encoded 26 quarantined problems whose framed leaf/pass ownership validated exactly one alternative target hypothesis (adjustments v3 `retargets`); their refutations were regenerated under the new targets (15 expanded, 5 rejected by GNU Go ship without branches under the off-tree rule). The remaining 79 need a human: 50 ambiguous (several valid hypotheses), 22 with no valid hypothesis (suspected transcription/ko cases), 7 without framed analysis (illegal printable lines).
 - 8 shards, about 10 MiB.
 - Every problem is labeled `verification.level: candidate`.
 - 9 JSON shards, about 2.9 MiB.
@@ -158,16 +158,16 @@ npm run build:cho-client-pack --workspace @goba/generator -- \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/corrected-positions.sgf \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/gnugo-audit/audit-report.json \
   ~/Documents/goba-research-artifacts/goba-cho-reconciliation/reconciliation-report.json \
-  "$(pwd)/client/public/packs/cho-elementary/5" \
-  ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json \
-  ~/Documents/goba-research-artifacts/goba-cho-deep-review/katago-adjustments-v2.json
+  "$(pwd)/client/public/packs/cho-elementary/6" \
+  ~/Documents/goba-research-artifacts/goba-cho-deep-review/refutations-merged.json \
+  ~/Documents/goba-research-artifacts/goba-cho-deep-review/katago-adjustments-v3.json
 ```
 
 KataGo verification rerun (prepare queries, analyze at pinned BLACK perspective, report):
 
 ```bash
 npm run verify:cho-katago --workspace @goba/generator -- prepare \
-  "$(pwd)/client/public/packs/cho-elementary/5" \
+  "$(pwd)/client/public/packs/cho-elementary/6" \
   ~/Documents/goba-research-artifacts/goba-cho-refutations/refutations-report.json \
   ~/Documents/goba-research-artifacts/goba-cho-katago-verify 32
 

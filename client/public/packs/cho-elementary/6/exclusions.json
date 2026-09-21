@@ -20,11 +20,6 @@
     "reason": "quarantined-katago-review"
   },
   {
-    "problemNumber": 96,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
     "problemNumber": 115,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
@@ -41,16 +36,6 @@
   },
   {
     "problemNumber": 179,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 180,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 182,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
   },
@@ -100,22 +85,12 @@
     "reason": "quarantined-explicit-pass"
   },
   {
-    "problemNumber": 299,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
     "problemNumber": 301,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
   },
   {
     "problemNumber": 305,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 307,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
   },
@@ -165,22 +140,7 @@
     "reason": "quarantined-katago-review"
   },
   {
-    "problemNumber": 354,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 355,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
     "problemNumber": 362,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 383,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
   },
@@ -245,11 +205,6 @@
     "reason": "quarantined-explicit-pass"
   },
   {
-    "problemNumber": 501,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
     "problemNumber": 506,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
@@ -260,47 +215,12 @@
     "reason": "quarantined-katago-review"
   },
   {
-    "problemNumber": 509,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
     "problemNumber": 510,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
   },
   {
     "problemNumber": 511,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 525,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 530,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 540,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 541,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 544,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 551,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
   },
@@ -345,22 +265,7 @@
     "reason": "quarantined-katago-review"
   },
   {
-    "problemNumber": 622,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 623,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
     "problemNumber": 635,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 637,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
   },
@@ -390,11 +295,6 @@
     "reason": "no-selected-target"
   },
   {
-    "problemNumber": 734,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
     "problemNumber": 735,
     "corpus": "exact",
     "reason": "quarantined-explicit-pass"
@@ -420,22 +320,12 @@
     "reason": "quarantined-katago-review"
   },
   {
-    "problemNumber": 762,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
     "problemNumber": 782,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
   },
   {
     "problemNumber": 800,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 801,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
   },
@@ -480,32 +370,12 @@
     "reason": "quarantined-katago-review"
   },
   {
-    "problemNumber": 834,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 835,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
     "problemNumber": 843,
     "corpus": "exact",
     "reason": "quarantined-explicit-pass"
   },
   {
     "problemNumber": 845,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 846,
-    "corpus": "exact",
-    "reason": "quarantined-katago-review"
-  },
-  {
-    "problemNumber": 881,
     "corpus": "exact",
     "reason": "quarantined-katago-review"
   },

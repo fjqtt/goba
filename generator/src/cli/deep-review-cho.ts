@@ -6,6 +6,7 @@ import { importSgfCollection } from '../sgf/importer';
 import { pointToGtp } from '../solver/katago-crosscheck';
 import type { ChoAuditResult } from '../catalog/cho-client-pack';
 import type { RefutationReport } from '../catalog/refutation-expansion';
+import { buildFrame, chainFromAnchor } from '../catalog/tsumego-frame';
 
 /**
  * Deep KataGo review of quarantined problems, book-move-rejected problems, and
@@ -23,6 +24,8 @@ if (mode === 'prepare' && rest.length >= 6) {
   await prepare(rest[0]!, rest[1]!, rest[2]!, rest[3]!, rest[4]!, rest[5]!);
 } else if (mode === 'report' && rest.length >= 1) {
   await report(rest[0]!);
+} else if (mode === 'retarget' && rest.length >= 4) {
+  await retarget(rest[0]!, rest[1]!, rest[2]!, rest[3]!);
 } else {
   process.stderr.write(
     'Usage: npm run deep-review:cho --workspace @goba/generator -- prepare '
@@ -221,125 +224,6 @@ async function prepare(
   process.stdout.write(`${JSON.stringify({ outDir, queryCount: queries.length, counts })}\n`);
 }
 
-/**
- * Fills the board outside the problem box with two walls (one per color) that are
- * unconditionally alive via interior grid eyes, and computes the komi that makes
- * the corner outcome decide the game. Components too small to hold two eyes stay
- * empty. Returns undefined when the problem leaves no room for a frame.
- */
-export function buildFrame(position: Position, relevantPoints: number[]) {
-  const size = position.boardSize;
-  const stones = [...position.setup.black, ...position.setup.white];
-  const points = [...stones, ...relevantPoints.filter(point => point >= 0 && point < size * size)];
-  const xs = points.map(point => point % size);
-  const ys = points.map(point => Math.floor(point / size));
-  const boxX1 = Math.min(size - 1, Math.max(...xs) + 2);
-  const boxY1 = Math.min(size - 1, Math.max(...ys) + 2);
-  if (boxX1 >= size - 4 && boxY1 >= size - 4) return undefined;
-
-  // One empty gap line around the box; right strip is one color, the rest below is the other.
-  const inFrame = (x: number, y: number) => x > boxX1 + 1 || y > boxY1 + 1;
-  const colorAt = (x: number, y: number): Color => (x > boxX1 + 1 ? 'W' : 'B');
-  const isHole = (x: number, y: number) => x % 5 === 2 && y % 5 === 2;
-
-  const candidate = new Map<number, Color>();
-  for (let y = 0; y < size; y += 1) {
-    for (let x = 0; x < size; x += 1) {
-      if (inFrame(x, y) && !isHole(x, y)) candidate.set(y * size + x, colorAt(x, y));
-    }
-  }
-  // Label connected components, then count each hole whose in-board 8-neighborhood
-  // lies entirely inside one component (a true single-point eye).
-  const componentOf = new Map<number, number>();
-  const componentColor: Color[] = [];
-  const componentPoints: number[][] = [];
-  for (const [start, color] of candidate) {
-    if (componentOf.has(start)) continue;
-    const componentId = componentPoints.length;
-    componentColor.push(color);
-    const component: number[] = [];
-    const stack = [start];
-    componentOf.set(start, componentId);
-    while (stack.length > 0) {
-      const point = stack.pop()!;
-      component.push(point);
-      const x = point % size;
-      const y = Math.floor(point / size);
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
-        const nx = x + dx;
-        const ny = y + dy;
-        const next = ny * size + nx;
-        if (nx < 0 || ny < 0 || nx >= size || ny >= size) continue;
-        if (componentOf.has(next) || candidate.get(next) !== color) continue;
-        componentOf.set(next, componentId);
-        stack.push(next);
-      }
-    }
-    componentPoints.push(component);
-  }
-  const eyesPerComponent = new Array<number>(componentPoints.length).fill(0);
-  for (let y = 0; y < size; y += 1) {
-    for (let x = 0; x < size; x += 1) {
-      if (!isHole(x, y) || !inFrame(x, y)) continue;
-      let owner: number | undefined;
-      let surrounded = true;
-      for (let ax = -1; ax <= 1 && surrounded; ax += 1) {
-        for (let ay = -1; ay <= 1 && surrounded; ay += 1) {
-          if (ax === 0 && ay === 0) continue;
-          const sx = x + ax;
-          const sy = y + ay;
-          if (sx < 0 || sy < 0 || sx >= size || sy >= size) continue;
-          const id = componentOf.get(sy * size + sx);
-          if (id === undefined || (owner !== undefined && id !== owner)) surrounded = false;
-          else owner = id;
-        }
-      }
-      if (surrounded && owner !== undefined) eyesPerComponent[owner]! += 1;
-    }
-  }
-  const black: number[] = [];
-  const white: number[] = [];
-  let holesBlack = 0;
-  let holesWhite = 0;
-  componentPoints.forEach((component, componentId) => {
-    if (eyesPerComponent[componentId]! < 2) return;
-    if (componentColor[componentId] === 'B') {
-      black.push(...component);
-      holesBlack += eyesPerComponent[componentId]!;
-    } else {
-      white.push(...component);
-      holesWhite += eyesPerComponent[componentId]!;
-    }
-  });
-  if (black.length === 0 && white.length === 0) return undefined;
-  const blackArea = black.length + holesBlack;
-  const whiteArea = white.length + holesWhite;
-  return {
-    black,
-    white,
-    komi: (student: Color) => blackArea - whiteArea + (student === 'B' ? 0.5 : -0.5),
-  };
-}
-
-function chainFromAnchor(position: Position, color: Color, anchor: number): number[] {
-  const size = position.boardSize;
-  const own = new Set(color === 'B' ? position.setup.black : position.setup.white);
-  const chain = new Set<number>();
-  const queue = [anchor];
-  while (queue.length > 0) {
-    const point = queue.pop()!;
-    if (chain.has(point) || !own.has(point)) continue;
-    chain.add(point);
-    const x = point % size;
-    const y = Math.floor(point / size);
-    if (x > 0) queue.push(point - 1);
-    if (x < size - 1) queue.push(point + 1);
-    if (y > 0) queue.push(point - size);
-    if (y < size - 1) queue.push(point + size);
-  }
-  return [...chain].sort((a, b) => a - b);
-}
-
 type Analysis = {
   id: string;
   rootInfo?: { winrate: number; scoreLead?: number };
@@ -448,4 +332,112 @@ async function report(outDirName: string): Promise<void> {
 
 function round(value: number): number {
   return Math.round(value * 1000) / 1000;
+}
+
+/**
+ * Target re-selection for quarantined problems using the existing framed leaf/pass
+ * ownership arrays: a hypothesis (target chain + goal) is valid when the book line
+ * clearly achieves it AND it fails when the student passes. Exactly one valid
+ * hypothesis re-encodes the problem; zero or several stay quarantined for a human.
+ */
+async function retarget(
+  collectionName: string,
+  auditName: string,
+  reviewDirName: string,
+  adjustmentsName: string,
+): Promise<void> {
+  const collectionPath = resolve(collectionName);
+  const [collection, audit] = await Promise.all([
+    importSgfCollection(await readFile(collectionPath, 'utf8'), {
+      sourceUri: `file://${collectionPath}`,
+      collection: basename(collectionPath),
+      attribution: 'Local research import',
+      licenseId: 'LicenseRef-Restricted-Research',
+      distribution: 'restricted',
+    }),
+    readFile(resolve(auditName), 'utf8').then(text => JSON.parse(text) as { results: ChoAuditResult[] }),
+  ]);
+  const adjustments = JSON.parse(await readFile(resolve(adjustmentsName), 'utf8')) as {
+    quarantineProblemNumbers: number[];
+    correctAdditions: Array<{ problemNumber: number; nodeId: number; move: number }>;
+  };
+  const reviewDir = resolve(reviewDirName);
+  const results = new Map<string, Analysis>();
+  for (const line of (await readFile(join(reviewDir, 'results.jsonl'), 'utf8')).split('\n')) {
+    if (line.trim()) {
+      const parsed = JSON.parse(line) as Analysis;
+      results.set(parsed.id, parsed);
+    }
+  }
+
+  const positions = new Map(collection.drafts.map((draft, index) => [index + 1, draft.position]));
+  const auditByNumber = new Map(audit.results.map(result => [result.problemNumber, result]));
+  const passQuarantine = audit.results
+    .filter(result => result.candidates.find(c => c.anchor === result.selectedTarget)?.primaryMove === 'PASS')
+    .map(result => result.problemNumber);
+  const reviewNumbers = [...new Set([...adjustments.quarantineProblemNumbers, ...passQuarantine])].sort((a, b) => a - b);
+
+  const retargets: Array<{ problemNumber: number; anchor: number; goalKind: string; leafOwn: number; passOwn: number }> = [];
+  const manual: Array<{ problemNumber: number; reason: string; passingCount?: number }> = [];
+
+  for (const problemNumber of reviewNumbers) {
+    const record = auditByNumber.get(problemNumber);
+    const position = positions.get(problemNumber);
+    const leaf = results.get(`leaf-${problemNumber}`);
+    const pass = results.get(`pass-${problemNumber}`);
+    if (!record || !position || !leaf?.ownership || !pass?.ownership) {
+      manual.push({ problemNumber, reason: 'no-framed-analysis' });
+      continue;
+    }
+    const passing: Array<{ anchor: number; goalKind: 'live' | 'capture'; leafOwn: number; passOwn: number }> = [];
+    for (const candidate of record.candidates) {
+      const goalKind: 'live' | 'capture' = candidate.targetColor === position.toPlay ? 'live' : 'capture';
+      const chain = chainFromAnchor(position, candidate.targetColor, candidate.anchor);
+      if (chain.length === 0) continue;
+      const ownAt = (ownership: number[]) => {
+        const black = chain.reduce((sum, point) => sum + (ownership[point] ?? 0), 0) / chain.length;
+        return candidate.targetColor === 'B' ? black : -black;
+      };
+      const leafOwn = ownAt(leaf.ownership);
+      const passOwn = ownAt(pass.ownership);
+      const leafMet = goalKind === 'live' ? leafOwn > 0.6 : leafOwn < -0.6;
+      const passMet = goalKind === 'live' ? passOwn > 0.6 : passOwn < -0.6;
+      if (leafMet && !passMet) {
+        passing.push({ anchor: candidate.anchor, goalKind, leafOwn: round(leafOwn), passOwn: round(passOwn) });
+      }
+    }
+    if (passing.length === 1) {
+      retargets.push({ problemNumber, ...passing[0]! });
+    } else {
+      manual.push({ problemNumber, reason: passing.length === 0 ? 'no-valid-hypothesis' : 'ambiguous', passingCount: passing.length });
+    }
+  }
+
+  const retargetNumbers = new Set(retargets.map(item => item.problemNumber));
+  const v3 = {
+    schemaVersion: 3,
+    verification: 'katago-1.18.2-b18c384nbt-tsumego-frame',
+    source: 'retarget sweep 2026-09-21 over deep-review framed leaf/pass ownership',
+    quarantineProblemNumbers: adjustments.quarantineProblemNumbers.filter(n => !retargetNumbers.has(n)),
+    correctAdditions: adjustments.correctAdditions.filter(a => !retargetNumbers.has(a.problemNumber)),
+    retargets: retargets.map(({ problemNumber, anchor }) => ({ problemNumber, anchor })),
+  };
+  const patchedResults = audit.results
+    .filter(result => retargetNumbers.has(result.problemNumber))
+    .map(result => ({ ...result, selectedTarget: retargets.find(r => r.problemNumber === result.problemNumber)!.anchor }));
+
+  await Promise.all([
+    writeFile(join(reviewDir, 'katago-adjustments-v3.json'), `${JSON.stringify(v3, null, 1)}\n`, 'utf8'),
+    writeFile(join(reviewDir, 'retargeted-audit-subset.json'), `${JSON.stringify({ results: patchedResults })}\n`, 'utf8'),
+    writeFile(join(reviewDir, 'retarget-report.json'), `${JSON.stringify({ retargets, manual }, null, 1)}\n`, 'utf8'),
+  ]);
+  process.stdout.write(`${JSON.stringify({
+    reviewed: reviewNumbers.length,
+    retargeted: retargets.length,
+    manual: manual.length,
+    manualReasons: manual.reduce<Record<string, number>>((acc, item) => {
+      acc[item.reason] = (acc[item.reason] ?? 0) + 1;
+      return acc;
+    }, {}),
+  })}\n`);
 }
