@@ -70,10 +70,12 @@ describe('PuzzleSession', () => {
     expect(restored.path).toEqual(result.path);
   });
 
-  it('checks legality before classifying a missing edge', async () => {
+  it('silently ignores a tap on an occupied point', async () => {
     const session = await startSession(await createSampleProblem());
     const result = await playStudentMove(session, 304);
-    expect(result.phase).toBe('illegal');
+    expect(result).toBe(session);
+    expect(result.phase).toBe('ready');
+    expect(result.path).toEqual([]);
   });
 
   it('reveals a deterministic hint without playing a move', async () => {

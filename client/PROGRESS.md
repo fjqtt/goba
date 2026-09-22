@@ -50,6 +50,8 @@ Requirements source: [PLAN.md](PLAN.md), roadmap §13. `[x]` means the stated wo
 
 ## Work log
 
+- 2026-09-22: a tap on an occupied point is now silently ignored (real-phone feedback: the occupied-point error message read as a bug). Suicide and superko taps keep their explanatory messages because the point looks playable. Engine-level change covers both tap and keyboard input; the retired message mapping stays in i18n for checkpoints saved before the change.
+
 - 2026-09-21 (later): installed pack revision 6 after the target re-selection sweep: 773 problems (26 quarantined problems re-encoded with KataGo-validated target groups and regenerated refutations), 618 with refutations, 62 + 26 problems remain quarantined for human review. TypeScript, 23 files / 70 tests, and the `/goba/` build (11,071 KiB precache) pass.
 
 - 2026-09-21: installed pack revision 5 after the framed deep review with KataGo 1.18.2/b18c384nbt: 747 problems (44 re-admitted from quarantine, 4 newly quarantined, 88 remain for human review), 603 with refutations, 181 with confirmed alternative solutions. TypeScript, 23 files / 70 tests, and the `/goba/` build (10,858 KiB precache) pass.
