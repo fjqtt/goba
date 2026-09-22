@@ -165,6 +165,8 @@ export async function playStudentMove(
 
   const applied = applyMove(session.rulesState, node.toPlay, move, session.problem.boardSize);
   if (!applied.ok) {
+    // Tapping an occupied point is a mis-tap, not a decision: ignore it silently.
+    if (applied.reason === 'occupied') return session;
     return {
       ...session,
       phase: 'illegal',
@@ -273,7 +275,6 @@ function contentError(session: PuzzleSession, message: string): PuzzleSession {
 }
 
 function illegalMoveMessage(reason: string): string {
-  if (reason === 'occupied') return 'Эта точка уже занята.';
   if (reason === 'suicide') return 'Этот ход — самоубийство группы.';
   if (reason === 'superko') return 'Этот ход повторяет прежнюю позицию.';
   return 'Этот ход недопустим.';
